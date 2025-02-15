@@ -12,6 +12,7 @@
 #include "../components/GameContextComponents.hpp"
 #include "../components/PhysicsComponents.hpp"
 #include "../components/NavigationComponents.hpp"
+#include "../helpers/PhysicsHelper.hpp"
 #include "../helpers/SpawnHelper.hpp"
 
 #include "../systems/MovementSystems.hpp"
@@ -32,21 +33,6 @@ void wlScene_TestGame::Start() {
 
 void wlScene_TestGame::OnUpdate( const double deltaTime ) {
 	auto& levelState = reg.ctx().get<wlLevelState>();
-	for ( std::size_t i = 0; i < levelState.sourceMap->size(); i++ ) {
-		for ( std::size_t j = 0; j < ( *levelState.sourceMap )[i].size(); j++ ) {
-			if ( ( *levelState.sourceMap )[i][j] == cellType_t::WALL ) {
-				SDL_SetRenderDrawColor( appState->renderer, 255, 0, 0, 255 );
-			} else if ( ( *levelState.sourceMap )[i][j] == cellType_t::FLOOR ) {
-				SDL_SetRenderDrawColor( appState->renderer, 0, 220, 0, 255 );
-			} else if ( ( *levelState.sourceMap )[i][j] == cellType_t::START ) {
-				SDL_SetRenderDrawColor( appState->renderer, 0, 0, 250, 255 );
-			} else {
-				SDL_SetRenderDrawColor( appState->renderer, 0, 0, 0, 255 );
-			}
-			SDL_FRect rect{ offsetCell * j, offsetCell * i, offsetCell, offsetCell };
-			SDL_RenderFillRect( appState->renderer, &rect );
-		}
-	}
 
 	static double currentTimeForSpawn;
 	currentTimeForSpawn += deltaTime;
@@ -64,6 +50,98 @@ void wlScene_TestGame::OnUpdate( const double deltaTime ) {
 	updatePosition( reg, deltaTime );
 	updatePathFollowing( reg );
 
+
+	// game logic
+
+	for ( auto&& [towerEnt, towerPos, tower] : reg.view<const wlPosition, wlTower>().each() ) {
+
+		// check current targetEnemy
+		if ( reg.valid( tower.targetEnemy ) && reg.all_of<wlPosition, wlEnemy>( tower.targetEnemy ) ) {
+			const auto targetEnemyPos = reg.get<wlPosition>( tower.targetEnemy ).value;
+			const auto targetEnemy_radiusCollision = reg.get<wlEnemy>( tower.targetEnemy ).radiusCollision; 
+			if ( checkCollision( targetEnemyPos, towerPos.value, targetEnemy_radiusCollision, tower.radiusAttack ) ) {
+				continue;
+			}
+		}
+
+		// update targetEnemy
+		bool foundEnemy = false;
+		for ( auto&& [enemyEnt, enemyPos, enemy] : reg.view<const wlPosition, const wlEnemy>().each() ) {
+			if ( checkCollision( enemyPos.value, towerPos.value, enemy.radiusCollision, tower.radiusAttack )) {
+				foundEnemy = true;
+				tower.targetEnemy = enemyEnt;
+				break;
+			}
+		}
+
+		if (!foundEnemy) {
+			tower.targetEnemy = entt::null;
+		}
+	}
+
+	for ( auto&& [ent, pos, tower] : reg.view<const wlPosition, wlTower>().each() ) {
+		tower.currentTimeForFire += deltaTime;
+
+		if ( tower.currentTimeForFire > tower.fireRate ) {
+			tower.currentTimeForFire = 0.0f;
+			if ( reg.valid( tower.targetEnemy ) && reg.all_of<wlPosition, wlEnemy>( tower.targetEnemy ) ) {
+				spawnBaseBullet( reg, tower.targetEnemy, pos.value, 1.0f, 5.0f, 300.0f );
+			}
+		}
+	}
+
+	for ( auto&& [ent, pos, vel, bullet] : reg.view<wlPosition, wlVelocity, wlBullet>().each() ) {
+		if (reg.valid( bullet.targetEnemy ) && reg.all_of<wlPosition, wlEnemy>( bullet.targetEnemy )) {
+			auto targetEnemyPos = reg.get<wlPosition>( bullet.targetEnemy ).value;
+			wlVec2 newDir = targetEnemyPos - pos.value;
+			newDir.Normalize();
+			vel.direction = newDir;
+			
+		} else {
+			reg.destroy( ent );
+		}
+	}
+
+	for ( auto&& [enemyEnt, enemyPos, enemy, enemyHealth] : reg.view<const wlPosition, const wlEnemy, wlHealth>().each() ) {
+		for ( auto&& [bulletEnt, bulletPos, bullet] : reg.view<const wlPosition, const wlBullet>().each() ) {
+			if ( checkCollision( enemyPos.value, bulletPos.value, enemy.radiusCollision, bullet.radiusCollision )) {
+				enemyHealth.currentHealth = std::max(enemyHealth.currentHealth - bullet.damage, 0.0f);
+				if (enemyHealth.currentHealth <= 0.01f) {
+					reg.destroy( enemyEnt );
+				}
+
+				reg.destroy( bulletEnt );
+				
+				break;
+			}
+		}
+	}
+
+	// clear not valid targetEnemy
+	for ( auto&& [ent, pos, vel, bullet] : reg.view<wlPosition, wlVelocity, wlBullet>().each() ) {
+		if ( !reg.valid( bullet.targetEnemy ) || !reg.all_of<wlPosition, wlEnemy>( bullet.targetEnemy ) ) {
+			reg.destroy( ent );
+		}
+	}
+
+	// rendering
+
+	for ( std::size_t i = 0; i < levelState.sourceMap->size(); i++ ) {
+		for ( std::size_t j = 0; j < ( *levelState.sourceMap )[i].size(); j++ ) {
+			if ( ( *levelState.sourceMap )[i][j] == cellType_t::WALL ) {
+				SDL_SetRenderDrawColor( appState->renderer, 255, 0, 0, 255 );
+			} else if ( ( *levelState.sourceMap )[i][j] == cellType_t::FLOOR ) {
+				SDL_SetRenderDrawColor( appState->renderer, 0, 220, 0, 255 );
+			} else if ( ( *levelState.sourceMap )[i][j] == cellType_t::START ) {
+				SDL_SetRenderDrawColor( appState->renderer, 0, 0, 250, 255 );
+			} else {
+				SDL_SetRenderDrawColor( appState->renderer, 0, 0, 0, 255 );
+			}
+			SDL_FRect rect{ offsetCell * j, offsetCell * i, offsetCell, offsetCell };
+			SDL_RenderFillRect( appState->renderer, &rect );
+		}
+	}
+
 	SDL_SetRenderDrawColor( appState->renderer, 255, 0, 0, 255 );
 	for ( auto&& [ent, pos, enemy] : reg.view<const wlPosition, const wlEnemy>().each() ) {
 		SDL_FRect rect{ pos.value.x, pos.value.y, 50.0f, 50.0f };
@@ -76,60 +154,10 @@ void wlScene_TestGame::OnUpdate( const double deltaTime ) {
 		SDL_RenderFillRect( appState->renderer, &rect );
 	}
 
-	for ( auto&& [ent, pos, tower] : reg.view<const wlPosition, wlTower>().each() ) {
-		tower.currentTimeForFire += deltaTime;
-
-		if (tower.currentTimeForFire > tower.fireRate) {
-			tower.currentTimeForFire = 0.0f;
-			spawnBaseBullet( reg, pos.value, 1.0f, 5.0f, 300.0f );
-		}
-	}
-
-	bool foundEnemy = false;
-	wlVec2 targetEnemyPos;
-	for ( auto&& [ent, pos, enemy] : reg.view<const wlPosition, const wlEnemy>().each() ) {
-		targetEnemyPos = pos.value;
-		foundEnemy = true;
-	}
-
-	for ( auto&& [ent, pos, vel, bullet] : reg.view<wlPosition, wlVelocity, wlBullet>().each() ) {
-		if (foundEnemy) {
-			wlVec2 newDir = targetEnemyPos - pos.value;
-			newDir.Normalize();
-			vel.direction = newDir;
-			
-		} else {
-			reg.destroy( ent );
-		}
-	}
-
 	SDL_SetRenderDrawColor( appState->renderer, 200, 200, 200, 255 );
 	for ( auto&& [ent, pos, bullet] : reg.view<const wlPosition, const wlBullet>().each() ) {
 		SDL_FRect rect{ pos.value.x, pos.value.y, 10.0f, 10.0f };
 		SDL_RenderFillRect( appState->renderer, &rect );
-	}
-
-	for ( auto&& [enemyEnt, enemyPos, enemy, enemyHealth] : reg.view<const wlPosition, const wlEnemy, wlHealth>().each() ) {
-		for ( auto&& [bulletEnt, bulletPos, bullet] : reg.view<const wlPosition, const wlBullet>().each() ) {
-			const float dx = enemyPos.value.x - bulletPos.value.x;
-			const float dy = enemyPos.value.y - bulletPos.value.y;
-			const float distSq = dx * dx + dy * dy;
-
-			const float collisionDist = enemy.radiusCollision + bullet.radiusCollision;
-			const float collisionDistSq = collisionDist * collisionDist;
-
-			if ( distSq <= collisionDistSq ) {
-
-				enemyHealth.currentHealth = std::max(enemyHealth.currentHealth - bullet.damage, 0.0f);
-				if (enemyHealth.currentHealth <= 0.01f) {
-					reg.destroy( enemyEnt );
-				}
-
-				reg.destroy( bulletEnt );
-				
-				break;
-			}
-		}
 	}
 }
 

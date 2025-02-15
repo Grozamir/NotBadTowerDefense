@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cmath>
+
 struct wlVec2 {
 	float			x;
 	float			y;

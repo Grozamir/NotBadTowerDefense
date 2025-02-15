@@ -69,7 +69,8 @@ target_sources(${PROJECT_NAME} PRIVATE
 "src/math/Vector.h"
 "src/systems/MovementSystems.cpp"
 "src/systems/Rendering.cpp"
-"src/helpers/SpawnHelper.cpp")
+"src/helpers/SpawnHelper.cpp"
+"src/helpers/PhysicsHelper.cpp")
 
 
 

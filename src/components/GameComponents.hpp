@@ -7,13 +7,18 @@ struct wlEnemy {
 
 struct wlTower {
 	float					fireRate = 0.1f;
+	float					radiusAttack = 250.0f;
 	float					currentTimeForFire = 0.0f;
+
+	entt::entity			targetEnemy = entt::null;
 };
 
 struct wlBullet {
 	float					damage = 1.0f;
 
 	float					radiusCollision = 1.0f;
+
+	entt::entity targetEnemy = entt::null;
 };
 
 struct wlHealth {
