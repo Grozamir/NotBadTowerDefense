@@ -1,0 +1,39 @@
+BasedOnStyle: Google
+IndentWidth: 4
+TabWidth: 4
+UseTab: Always
+ColumnLimit: 0
+AllowShortIfStatementsOnASingleLine: Never
+BreakBeforeBraces: Attach
+BraceWrapping:
+  AfterFunction: true
+  AfterControlStatement: true
+  AfterStruct: true
+  AfterClass: true
+  AfterEnum: true
+  BeforeCatch: true
+  BeforeElse: true
+  BeforeWhile: true
+  AfterNamespace: true
+
+AllowAllParametersOfDeclarationOnNextLine: false
+AlignAfterOpenBracket: Align
+
+AlignEscapedNewlines: Left
+IndentCaseLabels: true
+SpacesBeforeTrailingComments: 2
+CommentPragmas: '^ IWYU pragma: '
+SpaceBeforeParens: ControlStatements
+SpaceAfterCStyleCast: true
+AccessModifierOffset: -4
+AlwaysBreakAfterReturnType: None
+
+
+AlignConsecutiveAssignments: None
+AlignConsecutiveDeclarations: None
+
+AlignOperands: true
+
+SpacesInParentheses: true
+SpacesInParensOptions:
+  InConditionalStatements: true
