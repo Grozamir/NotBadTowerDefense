@@ -1,6 +1,6 @@
 #include "PhysicsHelper.hpp"
 
-#include "../math/Vector.h"
+#include "../math/Vector.hpp"
 
 bool checkCollision( wlVec2 posA, wlVec2 posB, float radiusA, float radiusB ) {
 	const float dx = posA.x - posB.x;

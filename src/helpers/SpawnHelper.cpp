@@ -1,6 +1,6 @@
 #include "SpawnHelper.hpp"
 
-#include "../math/Vector.h"
+#include "../math/Vector.hpp"
 
 #include "../components/GameComponents.hpp"
 #include "../components/PhysicsComponents.hpp"

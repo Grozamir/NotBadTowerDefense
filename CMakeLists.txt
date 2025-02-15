@@ -66,11 +66,12 @@ target_sources(${PROJECT_NAME} PRIVATE
 "src/scenes/SceneManager.cpp"
 "src/scenes/Scene_Base.cpp"
 "src/scenes/Scene_TestGame.cpp"
-"src/math/Vector.h"
 "src/systems/MovementSystems.cpp"
 "src/systems/Rendering.cpp"
 "src/helpers/SpawnHelper.cpp"
-"src/helpers/PhysicsHelper.cpp")
+"src/helpers/PhysicsHelper.cpp" 
+"src/systems/TowerSystems.cpp" 
+"src/systems/BulletSystems.cpp")
 
 
 

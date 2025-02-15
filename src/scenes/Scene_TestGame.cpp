@@ -16,6 +16,8 @@
 #include "../helpers/SpawnHelper.hpp"
 
 #include "../systems/MovementSystems.hpp"
+#include "../systems/TowerSystems.hpp"
+#include "../systems/BulletSystems.hpp"
 
 wlAppState* appState;
 
@@ -41,7 +43,7 @@ void wlScene_TestGame::OnUpdate( const double deltaTime ) {
 		currentTimeForSpawn = 0.0;
 		const auto enemyEnt = reg.create();
 		reg.emplace<wlEnemy>( enemyEnt, 25.0f );
-		reg.emplace<wlHealth>( enemyEnt, 5.0f );
+		reg.emplace<wlHealth>( enemyEnt, 10.0f );
 		reg.emplace<wlPosition>( enemyEnt, wlVec2{ levelState.pathForEnemy[0].second * offsetCell - 50.0f, levelState.pathForEnemy[0].first * offsetCell + 50.0f } );
 		reg.emplace<wlVelocity>( enemyEnt, wlVec2{ 0.0f, 0.0f }, 100.0f );
 		reg.emplace<wlPathFollower>( enemyEnt, levelState.pathForEnemy );
@@ -53,76 +55,15 @@ void wlScene_TestGame::OnUpdate( const double deltaTime ) {
 
 	// game logic
 
-	for ( auto&& [towerEnt, towerPos, tower] : reg.view<const wlPosition, wlTower>().each() ) {
+	updateTowerTargetSelection( reg );
 
-		// check current targetEnemy
-		if ( reg.valid( tower.targetEnemy ) && reg.all_of<wlPosition, wlEnemy>( tower.targetEnemy ) ) {
-			const auto targetEnemyPos = reg.get<wlPosition>( tower.targetEnemy ).value;
-			const auto targetEnemy_radiusCollision = reg.get<wlEnemy>( tower.targetEnemy ).radiusCollision; 
-			if ( checkCollision( targetEnemyPos, towerPos.value, targetEnemy_radiusCollision, tower.radiusAttack ) ) {
-				continue;
-			}
-		}
+	updateTowerAttack( reg, deltaTime );
 
-		// update targetEnemy
-		bool foundEnemy = false;
-		for ( auto&& [enemyEnt, enemyPos, enemy] : reg.view<const wlPosition, const wlEnemy>().each() ) {
-			if ( checkCollision( enemyPos.value, towerPos.value, enemy.radiusCollision, tower.radiusAttack )) {
-				foundEnemy = true;
-				tower.targetEnemy = enemyEnt;
-				break;
-			}
-		}
+	updateBulletTracking( reg );
 
-		if (!foundEnemy) {
-			tower.targetEnemy = entt::null;
-		}
-	}
+	updateEnemyHealthOnHit( reg );
 
-	for ( auto&& [ent, pos, tower] : reg.view<const wlPosition, wlTower>().each() ) {
-		tower.currentTimeForFire += deltaTime;
-
-		if ( tower.currentTimeForFire > tower.fireRate ) {
-			tower.currentTimeForFire = 0.0f;
-			if ( reg.valid( tower.targetEnemy ) && reg.all_of<wlPosition, wlEnemy>( tower.targetEnemy ) ) {
-				spawnBaseBullet( reg, tower.targetEnemy, pos.value, 1.0f, 5.0f, 300.0f );
-			}
-		}
-	}
-
-	for ( auto&& [ent, pos, vel, bullet] : reg.view<wlPosition, wlVelocity, wlBullet>().each() ) {
-		if (reg.valid( bullet.targetEnemy ) && reg.all_of<wlPosition, wlEnemy>( bullet.targetEnemy )) {
-			auto targetEnemyPos = reg.get<wlPosition>( bullet.targetEnemy ).value;
-			wlVec2 newDir = targetEnemyPos - pos.value;
-			newDir.Normalize();
-			vel.direction = newDir;
-			
-		} else {
-			reg.destroy( ent );
-		}
-	}
-
-	for ( auto&& [enemyEnt, enemyPos, enemy, enemyHealth] : reg.view<const wlPosition, const wlEnemy, wlHealth>().each() ) {
-		for ( auto&& [bulletEnt, bulletPos, bullet] : reg.view<const wlPosition, const wlBullet>().each() ) {
-			if ( checkCollision( enemyPos.value, bulletPos.value, enemy.radiusCollision, bullet.radiusCollision )) {
-				enemyHealth.currentHealth = std::max(enemyHealth.currentHealth - bullet.damage, 0.0f);
-				if (enemyHealth.currentHealth <= 0.01f) {
-					reg.destroy( enemyEnt );
-				}
-
-				reg.destroy( bulletEnt );
-				
-				break;
-			}
-		}
-	}
-
-	// clear not valid targetEnemy
-	for ( auto&& [ent, pos, vel, bullet] : reg.view<wlPosition, wlVelocity, wlBullet>().each() ) {
-		if ( !reg.valid( bullet.targetEnemy ) || !reg.all_of<wlPosition, wlEnemy>( bullet.targetEnemy ) ) {
-			reg.destroy( ent );
-		}
-	}
+	updateDestroyBulletOnInvalidTarget( reg );
 
 	// rendering
 
