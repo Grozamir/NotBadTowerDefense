@@ -6,3 +6,4 @@ bin/
 .idea/
 CMakeSettings.json
 Makefile
+*.exe
