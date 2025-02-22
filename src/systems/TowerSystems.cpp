@@ -1,7 +1,10 @@
 #include "TowerSystems.hpp"
 
+#include <corecrt_math_defines.h>
+
 #include "../components/GameComponents.hpp"
 #include "../components/PhysicsComponents.hpp"
+#include "../components/RenderComponents.hpp"
 #include "../helpers/PhysicsHelper.hpp"
 #include "../helpers/SpawnHelper.hpp"
 
@@ -32,6 +35,18 @@ void updateTowerTargetSelection( entt::registry& reg ) {
 	}
 }
 
+void updateTowerLookAtEnemy( entt::registry& reg ) {
+	for ( auto&& [ent, pos, tower, sprite] : reg.view<const wlPosition, const wlTower, wlSprite>().each() ) {
+		if ( reg.valid( tower.targetEnemy ) ) {
+			const auto& posEnemy = reg.get<wlPosition>( tower.targetEnemy );
+			const float dx = pos.value.x - posEnemy.value.x;
+			const float dy = pos.value.y - posEnemy.value.y;
+
+			sprite.angle = std::atan2( dy, dx ) * 180.0 / M_PI + 90.0;
+		}
+	}
+}
+
 void updateTowerAttack( entt::registry& reg, const double deltaTime ) {
 	for ( auto&& [ent, pos, tower] : reg.view<const wlPosition, wlTower>().each() ) {
 		tower.currentTimeForFire += deltaTime;
@@ -39,7 +54,7 @@ void updateTowerAttack( entt::registry& reg, const double deltaTime ) {
 		if ( tower.currentTimeForFire > tower.fireRate ) {
 			tower.currentTimeForFire = 0.0f;
 			if ( reg.valid( tower.targetEnemy ) && reg.all_of<wlPosition, wlEnemy>( tower.targetEnemy ) ) {
-				spawnBaseBullet( reg, tower.targetEnemy, pos.value, 1.0f, 5.0f, 800.0f );
+				spawnBaseBullet( reg, tower.targetEnemy, pos.value + wlVec2{ 25.0f, 25.0f }, 1.0f, 5.0f, 800.0f );
 			}
 		}
 	}

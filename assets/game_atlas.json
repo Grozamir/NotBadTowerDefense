@@ -1,0 +1,1 @@
+{"game_atlas.png":[{"name":"base_enemy","frame":{"x":1,"y":1,"w":16,"h":16}},{"name":"base_tower","frame":{"x":19,"y":1,"w":10,"h":13}},{"name":"bullet_01","frame":{"x":19,"y":16,"w":4,"h":4}},{"name":"ground_01","frame":{"x":1,"y":19,"w":16,"h":16}},{"name":"place_for_tower_01","frame":{"x":1,"y":37,"w":16,"h":16}}]}

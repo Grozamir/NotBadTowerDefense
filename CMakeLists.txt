@@ -57,6 +57,7 @@ set(BUILD_SHARED_LIBS OFF)
 add_subdirectory(vendor/SDL EXCLUDE_FROM_ALL)
 add_subdirectory(vendor/SDL_image EXCLUDE_FROM_ALL)
 add_subdirectory(vendor/SDL_ttf EXCLUDE_FROM_ALL)
+add_subdirectory(vendor/json EXCLUDE_FROM_ALL)
 
 add_executable(${PROJECT_NAME})
 
@@ -69,9 +70,10 @@ target_sources(${PROJECT_NAME} PRIVATE
 "src/systems/MovementSystems.cpp"
 "src/systems/Rendering.cpp"
 "src/helpers/SpawnHelper.cpp"
-"src/helpers/PhysicsHelper.cpp" 
-"src/systems/TowerSystems.cpp" 
-"src/systems/BulletSystems.cpp")
+"src/helpers/PhysicsHelper.cpp"
+"src/systems/TowerSystems.cpp"
+"src/systems/BulletSystems.cpp"
+"src/resources/Atlas.cpp")
 
 
 
@@ -98,7 +100,7 @@ else()
     )
 endif()
 
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3 SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3 SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf nlohmann_json::nlohmann_json)
 
 add_dependencies(${PROJECT_NAME} copy_assets)
 

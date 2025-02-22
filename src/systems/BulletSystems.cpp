@@ -43,4 +43,3 @@ void updateDestroyBulletOnInvalidTarget( entt::registry& reg ) {
 		}
 	}
 }
-

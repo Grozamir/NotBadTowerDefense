@@ -2,8 +2,6 @@
 
 #include <SDL3/SDL_render.h>
 
-#include <iostream>
-
 #include "../Application.hpp"
 
 #include "DataMaps.hpp"
@@ -11,15 +9,15 @@
 #include "../components/GameComponents.hpp"
 #include "../components/GameContextComponents.hpp"
 #include "../components/PhysicsComponents.hpp"
-#include "../components/NavigationComponents.hpp"
-#include "../helpers/PhysicsHelper.hpp"
+#include "../components/RenderComponents.hpp"
 #include "../helpers/SpawnHelper.hpp"
+#include "../resources/Sprites.hpp"
 
 #include "../systems/MovementSystems.hpp"
 #include "../systems/TowerSystems.hpp"
 #include "../systems/BulletSystems.hpp"
+#include "../systems/Rendering.hpp"
 
-wlAppState* appState;
 
 constexpr float offsetCell = 150.0f;
 
@@ -31,6 +29,26 @@ void wlScene_TestGame::Start() {
 	levelState.currentMap = game::level::TestLevel;
 
 	levelState.pathForEnemy = game::level::findPath( *levelState.sourceMap);
+
+	for ( std::size_t i = 0; i < levelState.sourceMap->size(); i++ ) {
+		for ( std::size_t j = 0; j < ( *levelState.sourceMap )[i].size(); j++ ) {
+			const auto ent = reg.create();
+			reg.emplace<wlPosition>( ent, wlVec2{ offsetCell * j, offsetCell * i } );
+			auto& sprite = reg.emplace<wlSprite>( ent );
+			sprite.texture = sprites::gameAtlas.texture;
+			if ( ( *levelState.sourceMap )[i][j] == cellType_t::WALL ) {
+				sprite.srcRect = sprites::gameAtlas.GetSpriteData( "place_for_tower_01" ).srcRect;
+			} else if ( ( *levelState.sourceMap )[i][j] == cellType_t::FLOOR ) {
+				sprite.srcRect = sprites::gameAtlas.GetSpriteData( "ground_01" ).srcRect;
+			} else if ( ( *levelState.sourceMap )[i][j] == cellType_t::START ) {
+				sprite.srcRect = sprites::gameAtlas.GetSpriteData( "ground_01" ).srcRect;
+			} else {
+				sprite.srcRect = sprites::gameAtlas.GetSpriteData( "ground_01" ).srcRect;
+			}
+			sprite.scale = offsetCell / sprite.srcRect.w;
+			sprite.posZ = -1;
+		}
+	}
 }
 
 void wlScene_TestGame::OnUpdate( const double deltaTime ) {
@@ -41,23 +59,21 @@ void wlScene_TestGame::OnUpdate( const double deltaTime ) {
 
 	if (currentTimeForSpawn > 1.0) {
 		currentTimeForSpawn = 0.0;
-		const auto enemyEnt = reg.create();
-		reg.emplace<wlEnemy>( enemyEnt, 25.0f );
-		reg.emplace<wlHealth>( enemyEnt, 10.0f );
-		reg.emplace<wlPosition>( enemyEnt, wlVec2{ levelState.pathForEnemy[0].second * offsetCell - 50.0f, levelState.pathForEnemy[0].first * offsetCell + 50.0f } );
-		reg.emplace<wlVelocity>( enemyEnt, wlVec2{ 0.0f, 0.0f }, 100.0f );
-		reg.emplace<wlPathFollower>( enemyEnt, levelState.pathForEnemy );
+		spawnBaseEnemy( reg, wlVec2{
+					levelState.pathForEnemy[0].second * offsetCell - 50.0f,
+					levelState.pathForEnemy[0].first * offsetCell + 50.0f } );
 	}
 
 	updatePosition( reg, deltaTime );
 	updatePathFollowing( reg );
-
 
 	// game logic
 
 	updateTowerTargetSelection( reg );
 
 	updateTowerAttack( reg, deltaTime );
+
+	updateTowerLookAtEnemy( reg );
 
 	updateBulletTracking( reg );
 
@@ -67,39 +83,8 @@ void wlScene_TestGame::OnUpdate( const double deltaTime ) {
 
 	// rendering
 
-	for ( std::size_t i = 0; i < levelState.sourceMap->size(); i++ ) {
-		for ( std::size_t j = 0; j < ( *levelState.sourceMap )[i].size(); j++ ) {
-			if ( ( *levelState.sourceMap )[i][j] == cellType_t::WALL ) {
-				SDL_SetRenderDrawColor( appState->renderer, 255, 0, 0, 255 );
-			} else if ( ( *levelState.sourceMap )[i][j] == cellType_t::FLOOR ) {
-				SDL_SetRenderDrawColor( appState->renderer, 0, 220, 0, 255 );
-			} else if ( ( *levelState.sourceMap )[i][j] == cellType_t::START ) {
-				SDL_SetRenderDrawColor( appState->renderer, 0, 0, 250, 255 );
-			} else {
-				SDL_SetRenderDrawColor( appState->renderer, 0, 0, 0, 255 );
-			}
-			SDL_FRect rect{ offsetCell * j, offsetCell * i, offsetCell, offsetCell };
-			SDL_RenderFillRect( appState->renderer, &rect );
-		}
-	}
-
-	SDL_SetRenderDrawColor( appState->renderer, 255, 0, 0, 255 );
-	for ( auto&& [ent, pos, enemy] : reg.view<const wlPosition, const wlEnemy>().each() ) {
-		SDL_FRect rect{ pos.value.x, pos.value.y, 50.0f, 50.0f };
-		SDL_RenderFillRect( appState->renderer, &rect );
-	}
-
-	SDL_SetRenderDrawColor( appState->renderer, 0, 150, 0, 255 );
-	for ( auto&& [ent, pos, tower] : reg.view<const wlPosition, const wlTower>().each() ) {
-		SDL_FRect rect{ pos.value.x, pos.value.y, offsetCell / 2.0f, offsetCell / 2.0f };
-		SDL_RenderFillRect( appState->renderer, &rect );
-	}
-
-	SDL_SetRenderDrawColor( appState->renderer, 200, 200, 200, 255 );
-	for ( auto&& [ent, pos, bullet] : reg.view<const wlPosition, const wlBullet>().each() ) {
-		SDL_FRect rect{ pos.value.x, pos.value.y, 10.0f, 10.0f };
-		SDL_RenderFillRect( appState->renderer, &rect );
-	}
+	updateDstRectSprites( reg );
+	drawSprites( reg );
 }
 
 void wlScene_TestGame::OnEvent( SDL_Event* event ) {
@@ -119,6 +104,11 @@ void wlScene_TestGame::OnEvent( SDL_Event* event ) {
 				const auto towerEnt = reg.create();
 				reg.emplace<wlPosition>( towerEnt, wlVec2{ offsetCell * indexCellX + offsetCell / 4.0f, offsetCell * indexCellY + offsetCell / 4.0f } );
 				reg.emplace<wlTower>( towerEnt, 0.2f );
+				auto& sprite = reg.emplace<wlSprite>( towerEnt );
+				sprite.texture = sprites::gameAtlas.texture;
+				sprite.srcRect = sprites::gameAtlas.GetSpriteData( "base_tower" ).srcRect;
+				sprite.isSimpleSprite = false;
+				sprite.scale = 6.0f;
 				posTowers.push_back( { indexCellY, indexCellX } );
 			}
 		}

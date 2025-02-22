@@ -5,6 +5,8 @@
 
 #include <iostream>
 
+#include "resources/Atlas.hpp"
+#include "resources/Sprites.hpp"
 #include "scenes/SceneManager.hpp"
 
 wlApplication::wlApplication() : 
@@ -15,6 +17,8 @@ wlApplication::wlApplication() :
 }
 
 wlApplication::~wlApplication() {
+	sprites::unload();
+
 	if ( state ) {
 		if ( state->renderer ) {
 			SDL_DestroyRenderer( state->renderer );
@@ -47,6 +51,8 @@ int wlApplication::Init() {
 		return SDL_APP_FAILURE;
 	}
 
+	sprites::load();
+
 	sceneMgr->ChangeScene( sceneType_t::TEST_GAME );
 
 	return SDL_APP_CONTINUE;
@@ -56,7 +62,7 @@ void wlApplication::OnUpdate() {
 	SDL_SetRenderDrawColor( state->renderer, 0, 0, 255, 255 );
 	SDL_RenderClear( state->renderer );
 
-	Uint64 currentTime = SDL_GetPerformanceCounter();
+	const Uint64 currentTime = SDL_GetPerformanceCounter();
 	deltaTime = static_cast<double>( currentTime - oldTime ) / static_cast<double>(SDL_GetPerformanceFrequency());
 	oldTime = currentTime;
 	
