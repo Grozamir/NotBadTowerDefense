@@ -25,6 +25,8 @@ struct wlLevelState {
 
 	std::vector<wlCellPos>	posTowers;
 
+	float					offsetCell{ 150.0f };
+
 	const wlLevelGrid& GetSourceMap() const {
 		return *sourceMap;
 	}
