@@ -11,6 +11,9 @@ class wlSceneManager;
 struct wlAppState {
 	SDL_Window *			window = nullptr;
 	SDL_Renderer *			renderer = nullptr;
+
+	int32_t					currentWidthScreen{1280};
+	int32_t					currentHeightScreen{ 720 };
 };
 
 extern wlAppState* appState;

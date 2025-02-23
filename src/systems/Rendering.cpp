@@ -1,9 +1,11 @@
 #include "Rendering.hpp"
 
 #include "../Application.hpp"
-#include "../components/PhysicsComponents.hpp"
 
+#include "../components/PhysicsComponents.hpp"
 #include "../components/RenderComponents.hpp"
+#include "../components/GameContextComponents.hpp"
+
 #include "../resources/Sprites.hpp"
 
 wlAppState* appState;
@@ -21,10 +23,11 @@ void drawSprites( entt::registry& reg ) {
 }
 
 void updateDstRectSprites( entt::registry& reg ) {
+	const auto& offset = reg.ctx().get<wlCenteringOffset>();
 	for ( auto [ent, pos, sprite] : reg.view<wlPosition, wlSprite>( ).each() ) {
 		sprite.dstRect = {
-			pos.value.x,
-			pos.value.y,
+			pos.value.x + offset.value.x,
+			pos.value.y + offset.value.y,
 			sprite.srcRect.w * sprite.scale,
 			sprite.srcRect.h * sprite.scale
 		};

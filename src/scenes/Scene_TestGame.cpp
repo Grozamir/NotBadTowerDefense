@@ -21,7 +21,14 @@
 
 constexpr float offsetCell = 150.0f;
 
-std::vector<wlCellPos> posTowers;
+namespace {
+void updateOffset( entt::registry& reg ) {
+	const auto& levelState = reg.ctx().get<wlLevelState>();
+	auto& offset = reg.ctx().get<wlCenteringOffset>();
+	offset.value.x = appState->currentWidthScreen / 2.0f - offsetCell * levelState.GetSourceMap()[0].size() / 2.0f;
+	offset.value.y = appState->currentHeightScreen / 2.0f - offsetCell * levelState.GetSourceMap().size() / 2.0f;
+}
+}
 
 void wlScene_TestGame::Start() {
 	auto& levelState = reg.ctx().emplace<wlLevelState>();
@@ -30,25 +37,31 @@ void wlScene_TestGame::Start() {
 
 	levelState.pathForEnemy = game::level::findPath( *levelState.sourceMap);
 
-	for ( std::size_t i = 0; i < levelState.sourceMap->size(); i++ ) {
-		for ( std::size_t j = 0; j < ( *levelState.sourceMap )[i].size(); j++ ) {
-			const auto ent = reg.create();
-			reg.emplace<wlPosition>( ent, wlVec2{ offsetCell * j, offsetCell * i } );
-			auto& sprite = reg.emplace<wlSprite>( ent );
-			sprite.texture = sprites::gameAtlas.texture;
-			if ( ( *levelState.sourceMap )[i][j] == cellType_t::WALL ) {
-				sprite.srcRect = sprites::gameAtlas.GetSpriteData( "place_for_tower_01" ).srcRect;
-			} else if ( ( *levelState.sourceMap )[i][j] == cellType_t::FLOOR ) {
-				sprite.srcRect = sprites::gameAtlas.GetSpriteData( "ground_01" ).srcRect;
-			} else if ( ( *levelState.sourceMap )[i][j] == cellType_t::START ) {
-				sprite.srcRect = sprites::gameAtlas.GetSpriteData( "ground_01" ).srcRect;
-			} else {
-				sprite.srcRect = sprites::gameAtlas.GetSpriteData( "ground_01" ).srcRect;
+	{
+		auto& sourceMap = levelState.GetSourceMap();
+		for ( std::size_t i = 0; i < sourceMap.size(); i++ ) {
+			for ( std::size_t j = 0; j < sourceMap[i].size(); j++ ) {
+				const auto ent = reg.create();
+				reg.emplace<wlPosition>( ent, wlVec2{ offsetCell * j, offsetCell * i } );
+				auto& sprite = reg.emplace<wlSprite>( ent );
+				sprite.texture = sprites::gameAtlas.texture;
+				if ( sourceMap[i][j] == cellType_t::WALL ) {
+					sprite.srcRect = sprites::gameAtlas.GetSpriteData( "place_for_tower_01" ).srcRect;
+				} else if ( sourceMap[i][j] == cellType_t::FLOOR ) {
+					sprite.srcRect = sprites::gameAtlas.GetSpriteData( "ground_01" ).srcRect;
+				} else if ( sourceMap[i][j] == cellType_t::START ) {
+					sprite.srcRect = sprites::gameAtlas.GetSpriteData( "ground_01" ).srcRect;
+				} else {
+					sprite.srcRect = sprites::gameAtlas.GetSpriteData( "ground_01" ).srcRect;
+				}
+				sprite.scale = offsetCell / sprite.srcRect.w;
+				sprite.posZ = -1;
 			}
-			sprite.scale = offsetCell / sprite.srcRect.w;
-			sprite.posZ = -1;
 		}
 	}
+
+	reg.ctx().emplace<wlCenteringOffset>();
+	updateOffset( reg );
 }
 
 void wlScene_TestGame::OnUpdate( const double deltaTime ) {
@@ -88,17 +101,19 @@ void wlScene_TestGame::OnUpdate( const double deltaTime ) {
 }
 
 void wlScene_TestGame::OnEvent( SDL_Event* event ) {
-	if ( event->type == SDL_EVENT_MOUSE_BUTTON_DOWN && event->button.button == 1) {
+	if ( event->type == SDL_EVENT_MOUSE_BUTTON_DOWN && event->button.button == 1 ) {
+		const auto& offset = reg.ctx().get<wlCenteringOffset>();
 		auto& levelState = reg.ctx().get<wlLevelState>();
-		const float mousePositionX = event->button.x;
-		const float mousePositionY = event->button.y;
+		const float mousePositionX = event->button.x - offset.value.x;
+		const float mousePositionY = event->button.y - offset.value.y;
 
 		const int32_t indexCellX = mousePositionX / offsetCell;
 		const int32_t indexCellY = mousePositionY / offsetCell;
 
-		if ( levelState.sourceMap->size() > indexCellY && levelState.sourceMap->at( indexCellY ).size() > indexCellX ) {
-			if ( ( *levelState.sourceMap )[indexCellY][indexCellX] == cellType_t::WALL && std::ranges::find( posTowers, std::pair{ indexCellY, indexCellX } ) == posTowers.end() ) {
-				SDL_SetRenderDrawColor( appState->renderer, 0, 200, 0, 255 );
+		const auto& sourceMap = levelState.GetSourceMap();
+		if ( sourceMap.size() > indexCellY && sourceMap.at( indexCellY ).size() > indexCellX ) {
+			if ( sourceMap[indexCellY][indexCellX] == cellType_t::WALL &&
+				std::ranges::find( levelState.posTowers, std::pair{ indexCellY, indexCellX } ) == levelState.posTowers.end() ) {
 				levelState.currentMap[indexCellY][indexCellX] = cellType_t::TOWER;
 
 				const auto towerEnt = reg.create();
@@ -109,8 +124,11 @@ void wlScene_TestGame::OnEvent( SDL_Event* event ) {
 				sprite.srcRect = sprites::gameAtlas.GetSpriteData( "base_tower" ).srcRect;
 				sprite.isSimpleSprite = false;
 				sprite.scale = 6.0f;
-				posTowers.push_back( { indexCellY, indexCellX } );
+
+				levelState.posTowers.push_back( { indexCellY, indexCellX } );
 			}
 		}
+	} else if ( event->type == SDL_EVENT_WINDOW_RESIZED ) {
+		updateOffset( reg );
 	}
 }

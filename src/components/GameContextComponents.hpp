@@ -2,6 +2,8 @@
 
 #include <vector>
 
+#include "../math/Vector.hpp"
+
 enum class cellType_t : uint8_t {
 	WALL	= 0,
 	FLOOR	= 1,
@@ -20,4 +22,14 @@ struct wlLevelState {
 	wlLevelGrid				currentMap;
 
 	std::vector<wlCellPos>	pathForEnemy;
+
+	std::vector<wlCellPos>	posTowers;
+
+	const wlLevelGrid& GetSourceMap() const {
+		return *sourceMap;
+	}
+};
+
+struct wlCenteringOffset {
+	wlVec2					value{};
 };

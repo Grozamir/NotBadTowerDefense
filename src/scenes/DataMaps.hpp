@@ -10,11 +10,11 @@ using ct = cellType_t;
 
 
 inline const wlLevelGrid TestLevel = {
-	{ ct::WALL,	 ct::WALL,	ct::WALL,	ct::WALL,  ct::WALL },
-	{ ct::START,	 ct::FLOOR, ct::FLOOR,	ct::FLOOR, ct::WALL },
-	{ ct::WALL,	 ct::WALL,	ct::WALL,	ct::FLOOR, ct::WALL },
-	{ ct::WALL,	 ct::FLOOR, ct::FLOOR,	ct::FLOOR, ct::WALL },
-	{ ct::WALL,	 ct::END,	ct::WALL,	ct::WALL,  ct::WALL },
+	{ ct::WALL,	ct::WALL,	ct::WALL,	ct::WALL,	ct::WALL,	ct::WALL },
+	{ ct::START,	ct::FLOOR,	ct::FLOOR,	ct::FLOOR,	ct::FLOOR,	ct::WALL },
+	{ ct::WALL,	ct::WALL,	ct::WALL,	ct::WALL,	ct::FLOOR,	ct::WALL },
+	{ ct::WALL,	ct::FLOOR,	ct::FLOOR,	ct::FLOOR,	ct::FLOOR,	ct::WALL },
+	{ ct::WALL,	ct::END,	ct::WALL,	ct::WALL,	ct::WALL,	ct::WALL },
 };
 
 inline std::vector<wlCellPos> findPath( const wlLevelGrid& level, const wlCellPos startPath, const wlCellPos endPath ) {

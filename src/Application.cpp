@@ -72,5 +72,9 @@ void wlApplication::OnUpdate() {
 }
 
 void wlApplication::OnEvent( SDL_Event* event ) const {
+	if (event->type == SDL_EVENT_WINDOW_RESIZED) {
+		state->currentWidthScreen	= event->window.data1;
+		state->currentHeightScreen	= event->window.data2;
+	}
 	sceneMgr->OnEvent( event );
 }
