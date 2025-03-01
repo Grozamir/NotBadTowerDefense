@@ -18,5 +18,12 @@ public:
 	void					OnEvent( SDL_Event* event );
 
 private:
-	std::shared_ptr<wlScene_Base> currentScene = nullptr;
+	void					LoadNextScene();
+
+private:
+	std::shared_ptr<wlScene_Base> currentScene{ nullptr };
+
+	bool					needChangeScene{ false };
+	sceneType_t				nextScene{ sceneType_t::MAIN_MENU };
+
 };

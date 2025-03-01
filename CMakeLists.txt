@@ -75,7 +75,9 @@ target_sources(${PROJECT_NAME} PRIVATE
 "src/systems/TowerSystems.cpp"
 "src/systems/BulletSystems.cpp"
 "src/resources/Atlas.cpp"
-"src/scenes/Scene_MainMenu.cpp" "src/systems/UIEvents.cpp" "src/resources/Resources.cpp")
+"src/scenes/Scene_MainMenu.cpp"
+"src/systems/UIEvents.cpp"
+"src/resources/Resources.cpp")
 
 
 

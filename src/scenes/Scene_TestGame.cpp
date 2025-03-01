@@ -5,11 +5,13 @@
 #include "../Application.hpp"
 
 #include "DataMaps.hpp"
+#include "SceneManager.hpp"
 
 #include "../components/GameComponents.hpp"
 #include "../components/GameContextComponents.hpp"
 #include "../components/PhysicsComponents.hpp"
 #include "../components/RenderComponents.hpp"
+#include "../components/UIComponents.hpp"
 
 #include "../helpers/SpawnHelper.hpp"
 #include "../resources/Sprites.hpp"
@@ -18,6 +20,7 @@
 #include "../systems/TowerSystems.hpp"
 #include "../systems/BulletSystems.hpp"
 #include "../systems/Rendering.hpp"
+#include "../systems/UIEvents.hpp"
 
 
 namespace {
@@ -61,6 +64,27 @@ void wlScene_TestGame::Start() {
 
 	reg.ctx().emplace<wlCenteringOffset>();
 	updateOffset( reg );
+
+	{
+		const auto btnPauseEnt = reg.create();
+		auto& btn = reg.emplace<wlButton>( btnPauseEnt );
+
+		btn.onClick = [sceneMgr = appState->app->GetSceneMgr()]( entt::registry& reg ) {
+			sceneMgr->ChangeScene( sceneType_t::MAIN_MENU );
+		};
+
+		auto& sprite = reg.emplace<wlUISprite>( btnPauseEnt );
+		sprite.texture = wlSprites::uiAtlas.texture;
+		sprite.srcRect = wlSprites::uiAtlas.GetSpriteData( "pause_btn" ).srcRect;
+
+		auto& uiElm = reg.emplace<wlUIElement>( btnPauseEnt );
+		uiElm.scale = wlVec2{ 4.0f, 4.0f };
+		uiElm.xAnchor = xAnchor_t::right;
+		uiElm.yAnchor = yAnchor_t::top;
+		uiElm.position = wlVec2{ 15.0f, 15.0f };
+	}
+
+	UpdateDstUIElements( reg );
 }
 
 void wlScene_TestGame::OnUpdate( const double deltaTime ) {
@@ -97,6 +121,8 @@ void wlScene_TestGame::OnUpdate( const double deltaTime ) {
 
 	UpdateDstRectSprites( reg );
 	DrawSprites( reg );
+
+	DrawUIElements( reg );
 }
 
 void wlScene_TestGame::OnEvent( SDL_Event* event ) {
@@ -130,5 +156,11 @@ void wlScene_TestGame::OnEvent( SDL_Event* event ) {
 		}
 	} else if ( event->type == SDL_EVENT_WINDOW_RESIZED ) {
 		updateOffset( reg );
+
+		UpdateDstUIElements( reg );
+	}
+
+	if ( HandleUIMouseEvent( reg, event ) ) {
+		UpdateDstUIElements( reg );
 	}
 }

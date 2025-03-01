@@ -4,4 +4,4 @@
 
 #include "SDL3/SDL_events.h"
 
-void HandleUIMouseEvent( entt::registry& reg, const SDL_Event* event );
+bool HandleUIMouseEvent( entt::registry& reg, const SDL_Event* event );
