@@ -50,3 +50,10 @@ void wlAtlas::ParseAtlas( const std::string& assetsPath, const std::string& atla
 
 	file.close();
 }
+
+void wlAtlas::Unload() {
+	if (texture != nullptr) {
+		SDL_DestroyTexture( texture );
+		texture = nullptr;
+	}
+}

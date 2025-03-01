@@ -50,6 +50,7 @@ set(SDL_TESTS OFF)
 set(SDL_TEST_LIBRARY OFF)
 set(SDL_EXAMPLES OFF)
 
+set(SDLTTF_PLUTOSVG OFF CACHE BOOL "" FORCE)
 
 set(vendored_default TRUE)
 set(BUILD_SHARED_LIBS OFF)
@@ -73,7 +74,8 @@ target_sources(${PROJECT_NAME} PRIVATE
 "src/helpers/PhysicsHelper.cpp"
 "src/systems/TowerSystems.cpp"
 "src/systems/BulletSystems.cpp"
-"src/resources/Atlas.cpp")
+"src/resources/Atlas.cpp"
+"src/scenes/Scene_MainMenu.cpp" "src/systems/UIEvents.cpp" "src/resources/Resources.cpp")
 
 
 

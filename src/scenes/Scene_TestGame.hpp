@@ -3,9 +3,9 @@
 #include "Scene_Base.hpp"
 
 
-class wlScene_TestGame : public wlScene_Base {
+class wlScene_TestGame final : public wlScene_Base {
 public:
 	void					Start() override;
-	void					OnUpdate( const double deltaTime ) override;
-	void					OnEvent(SDL_Event* event) override;
+	void					OnUpdate( double deltaTime ) override;
+	void					OnEvent( SDL_Event* event ) override;
 };

@@ -5,7 +5,7 @@
 
 #include "../helpers/PhysicsHelper.hpp"
 
-void updateBulletTracking( entt::registry& reg ) {
+void UpdateBulletTracking( entt::registry& reg ) {
 	for ( auto&& [ent, pos, vel, bullet] : reg.view<wlPosition, wlVelocity, wlBullet>().each() ) {
 		if ( reg.valid( bullet.targetEnemy ) && reg.all_of<wlPosition, wlEnemy>( bullet.targetEnemy ) ) {
 			auto targetEnemyPos = reg.get<wlPosition>( bullet.targetEnemy ).value;
@@ -19,7 +19,7 @@ void updateBulletTracking( entt::registry& reg ) {
 	}
 }
 
-void updateEnemyHealthOnHit( entt::registry& reg ) {
+void UpdateEnemyHealthOnHit( entt::registry& reg ) {
 	for ( auto&& [enemyEnt, enemyPos, enemy, enemyHealth] : reg.view<const wlPosition, const wlEnemy, wlHealth>().each() ) {
 		for ( auto&& [bulletEnt, bulletPos, bullet] : reg.view<const wlPosition, const wlBullet>().each() ) {
 			if ( checkCollision( enemyPos.value, bulletPos.value, enemy.radiusCollision, bullet.radiusCollision ) ) {
@@ -36,7 +36,7 @@ void updateEnemyHealthOnHit( entt::registry& reg ) {
 	}
 }
 
-void updateDestroyBulletOnInvalidTarget( entt::registry& reg ) {
+void UpdateDestroyBulletOnInvalidTarget( entt::registry& reg ) {
 	for ( auto&& [ent, pos, vel, bullet] : reg.view<wlPosition, wlVelocity, wlBullet>().each() ) {
 		if ( !reg.valid( bullet.targetEnemy ) || !reg.all_of<wlPosition, wlEnemy>( bullet.targetEnemy ) ) {
 			reg.destroy( ent );

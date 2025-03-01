@@ -1,5 +1,8 @@
 #pragma once
 #include "entt.hpp"
 
-void drawSprites( entt::registry& reg );
-void updateDstRectSprites( entt::registry& reg );
+void DrawSprites( entt::registry& reg );
+void UpdateDstRectSprites( entt::registry& reg );
+
+void DrawUIElements( entt::registry& reg );
+void UpdateDstUIElements( entt::registry& reg );

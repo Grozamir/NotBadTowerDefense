@@ -43,15 +43,15 @@ void wlScene_TestGame::Start() {
 				const auto ent = reg.create();
 				reg.emplace<wlPosition>( ent, wlVec2{ levelState.offsetCell * j, levelState.offsetCell * i } );
 				auto& sprite = reg.emplace<wlSprite>( ent );
-				sprite.texture = sprites::gameAtlas.texture;
+				sprite.texture = wlSprites::gameAtlas.texture;
 				if ( sourceMap[i][j] == cellType_t::WALL ) {
-					sprite.srcRect = sprites::gameAtlas.GetSpriteData( "place_for_tower_01" ).srcRect;
+					sprite.srcRect = wlSprites::gameAtlas.GetSpriteData( "place_for_tower_01" ).srcRect;
 				} else if ( sourceMap[i][j] == cellType_t::FLOOR ) {
-					sprite.srcRect = sprites::gameAtlas.GetSpriteData( "ground_01" ).srcRect;
+					sprite.srcRect = wlSprites::gameAtlas.GetSpriteData( "ground_01" ).srcRect;
 				} else if ( sourceMap[i][j] == cellType_t::START ) {
-					sprite.srcRect = sprites::gameAtlas.GetSpriteData( "ground_01" ).srcRect;
+					sprite.srcRect = wlSprites::gameAtlas.GetSpriteData( "ground_01" ).srcRect;
 				} else {
-					sprite.srcRect = sprites::gameAtlas.GetSpriteData( "ground_01" ).srcRect;
+					sprite.srcRect = wlSprites::gameAtlas.GetSpriteData( "ground_01" ).srcRect;
 				}
 				sprite.scale = levelState.offsetCell / sprite.srcRect.w;
 				sprite.posZ = -1;
@@ -76,27 +76,27 @@ void wlScene_TestGame::OnUpdate( const double deltaTime ) {
 								 levelState.pathForEnemy[0].first * levelState.offsetCell + 50.0f } );
 	}
 
-	updatePosition( reg, deltaTime );
-	updatePathFollowing( reg );
+	UpdatePosition( reg, deltaTime );
+	UpdatePathFollowing( reg );
 
 	// game logic
 
-	updateTowerTargetSelection( reg );
+	UpdateTowerTargetSelection( reg );
 
-	updateTowerAttack( reg, deltaTime );
+	UpdateTowerAttack( reg, deltaTime );
 
-	updateTowerLookAtEnemy( reg );
+	UpdateTowerLookAtEnemy( reg );
 
-	updateBulletTracking( reg );
+	UpdateBulletTracking( reg );
 
-	updateEnemyHealthOnHit( reg );
+	UpdateEnemyHealthOnHit( reg );
 
-	updateDestroyBulletOnInvalidTarget( reg );
+	UpdateDestroyBulletOnInvalidTarget( reg );
 
 	// rendering
 
-	updateDstRectSprites( reg );
-	drawSprites( reg );
+	UpdateDstRectSprites( reg );
+	DrawSprites( reg );
 }
 
 void wlScene_TestGame::OnEvent( SDL_Event* event ) {
@@ -120,8 +120,8 @@ void wlScene_TestGame::OnEvent( SDL_Event* event ) {
 															levelState.offsetCell * indexCellY + levelState.offsetCell / 4.0f } );
 				reg.emplace<wlTower>( towerEnt, 0.2f );
 				auto& sprite = reg.emplace<wlSprite>( towerEnt );
-				sprite.texture = sprites::gameAtlas.texture;
-				sprite.srcRect = sprites::gameAtlas.GetSpriteData( "base_tower" ).srcRect;
+				sprite.texture = wlSprites::gameAtlas.texture;
+				sprite.srcRect = wlSprites::gameAtlas.GetSpriteData( "base_tower" ).srcRect;
 				sprite.isSimpleSprite = false;
 				sprite.scale = 6.0f;
 

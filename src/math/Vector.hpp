@@ -15,6 +15,8 @@ struct wlVec2 {
 	wlVec2			operator-( const wlVec2& vec ) const;
 
 	wlVec2			operator*( const float value ) const;
+
+	wlVec2&			operator*=( const float value );
 	
 
 	bool			operator==( const wlVec2& vec ) const;
@@ -48,6 +50,12 @@ inline wlVec2 wlVec2::operator*( const float value ) const {
 	return wlVec2{ x * value, y * value };
 }
 
+inline wlVec2& wlVec2::operator*=( const float value ) {
+	x *= value;
+	y *= value;
+	return *this;
+}
+
 inline bool wlVec2::operator==( const wlVec2& vec ) const {
 	return std::fabsf( x - vec.x ) < 1e-6 && std::fabsf( y - vec.y ) < 1e-6;
 }
@@ -64,5 +72,3 @@ inline void wlVec2::Normalize() {
 inline float wlVec2::Length() const {
 	return std::sqrt( x * x + y * y );;
 }
-
-//#define vec2toparam(vec) vec.x, vec.y

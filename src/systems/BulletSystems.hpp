@@ -2,8 +2,8 @@
 
 #include "entt.hpp"
 
-void updateBulletTracking(entt::registry& reg);
+void UpdateBulletTracking(entt::registry& reg);
 
-void updateEnemyHealthOnHit( entt::registry& reg );
+void UpdateEnemyHealthOnHit( entt::registry& reg );
 
-void updateDestroyBulletOnInvalidTarget( entt::registry& reg );
+void UpdateDestroyBulletOnInvalidTarget( entt::registry& reg );

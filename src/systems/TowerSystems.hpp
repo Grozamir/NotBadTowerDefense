@@ -1,7 +1,6 @@
 #pragma once
 #include "entt.hpp"
 
-void updateTowerTargetSelection(entt::registry& reg);
-void updateTowerLookAtEnemy( entt::registry& reg );
-void updateTowerAttack( entt::registry& reg, const double deltaTime );
-
+void UpdateTowerTargetSelection(entt::registry& reg);
+void UpdateTowerLookAtEnemy( entt::registry& reg );
+void UpdateTowerAttack( entt::registry& reg, const double deltaTime );

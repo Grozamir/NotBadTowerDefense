@@ -3,13 +3,13 @@
 #include "../components/PhysicsComponents.hpp"
 #include "../components/NavigationComponents.hpp"
 
-void updatePosition( entt::registry& reg, const double deltaTime ) {
+void UpdatePosition( entt::registry& reg, const double deltaTime ) {
 	for ( auto&& [ent, pos, vel] : reg.view<wlPosition, const wlVelocity>().each() ) {
 		pos.value = pos.value + vel.direction * vel.speed * deltaTime;
 	}
 }
 
-void updatePathFollowing( entt::registry& reg ) {
+void UpdatePathFollowing( entt::registry& reg ) {
 	for ( auto&& [ent, pos, vel, moveByPath] : reg.view<const wlPosition, wlVelocity, wlPathFollower>().each() ) {
 		const auto& [targetColumn, targetRow] = moveByPath.path[moveByPath.currentTargetPointIndex];
 		wlVec2 cellTargetPos{ targetRow * 150.0f + 50.0f, targetColumn * 150.0f + 50.0f };

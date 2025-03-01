@@ -16,8 +16,8 @@ entt::entity spawnBaseBullet( entt::registry& reg, entt::entity targetEnemy, wlV
 	reg.emplace<wlPosition>( bulletEnt, pos );
 	reg.emplace<wlVelocity>( bulletEnt, wlVec2{ 0.0f, 0.0f }, speed );
 	auto& sprite = reg.emplace<wlSprite>( bulletEnt );
-	sprite.texture = sprites::gameAtlas.texture;
-	sprite.srcRect = sprites::gameAtlas.GetSpriteData( "bullet_01" ).srcRect;
+	sprite.texture = wlSprites::gameAtlas.texture;
+	sprite.srcRect = wlSprites::gameAtlas.GetSpriteData( "bullet_01" ).srcRect;
 	sprite.scale = 4.0f;
 	return bulletEnt;
 }
@@ -31,8 +31,8 @@ entt::entity spawnBaseEnemy( entt::registry& reg, wlVec2 pos ) {
 	reg.emplace<wlVelocity>( enemyEnt, wlVec2{ 0.0f, 0.0f }, 100.0f );
 	reg.emplace<wlPathFollower>( enemyEnt, levelState.pathForEnemy );
 	auto& sprite = reg.emplace<wlSprite>( enemyEnt );
-	sprite.texture = sprites::gameAtlas.texture;
-	sprite.srcRect = sprites::gameAtlas.GetSpriteData( "base_enemy" ).srcRect;
+	sprite.texture = wlSprites::gameAtlas.texture;
+	sprite.srcRect = wlSprites::gameAtlas.GetSpriteData( "base_enemy" ).srcRect;
 	sprite.scale = 4.0f;
 	return enemyEnt;
 }

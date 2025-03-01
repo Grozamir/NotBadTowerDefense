@@ -20,4 +20,5 @@ public:
 
 	const wlSpriteAtlasData&	GetSpriteData( const std::string& keySprite);
 	void						ParseAtlas( const std::string& assetsPath, const std::string& atlasFile );
+	void						Unload();
 };

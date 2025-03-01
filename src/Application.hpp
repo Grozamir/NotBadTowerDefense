@@ -2,15 +2,19 @@
 
 #include "SDL3/SDL_stdinc.h"
 
+class wlApplication;
 struct SDL_Window;
 struct SDL_Renderer;
+struct TTF_TextEngine;
 union  SDL_Event;
 
 class wlSceneManager;
 
 struct wlAppState {
-	SDL_Window *			window = nullptr;
-	SDL_Renderer *			renderer = nullptr;
+	SDL_Window*				window{ nullptr };
+	SDL_Renderer*			renderer{ nullptr };
+	TTF_TextEngine*			textEngine{ nullptr };
+	wlApplication*			app{ nullptr };
 
 	int32_t					currentWidthScreen{1280};
 	int32_t					currentHeightScreen{ 720 };

@@ -1,16 +1,19 @@
 #pragma once
 #include "Atlas.hpp"
 
-namespace sprites {
+namespace wlSprites {
 
 inline wlAtlas gameAtlas;
+inline wlAtlas uiAtlas;
 
-inline void load() {
+inline void Load() {
 	gameAtlas.ParseAtlas( "./assets/", "game_atlas.json" );
+	uiAtlas.ParseAtlas( "./assets/", "ui_atlas.json" );
 }
 
-inline void unload() {
-	
+inline void Unload() {
+	gameAtlas.Unload();
+	uiAtlas.Unload();
 }
 
 }

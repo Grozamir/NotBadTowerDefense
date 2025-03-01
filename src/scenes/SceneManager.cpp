@@ -1,11 +1,13 @@
 #include "SceneManager.hpp"
 
+#include "Scene_MainMenu.hpp"
 #include "Scene_TestGame.hpp"
 
 void wlSceneManager::ChangeScene( const sceneType_t sceneType ) {
 
 	switch ( sceneType ) {
 		case sceneType_t::MAIN_MENU:
+			currentScene = std::make_shared<wlScene_MainMenu>();
 			break;
 		case sceneType_t::TEST_GAME:
 			currentScene = std::make_shared<wlScene_TestGame>();

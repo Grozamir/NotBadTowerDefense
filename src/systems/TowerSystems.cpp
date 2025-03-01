@@ -8,7 +8,7 @@
 #include "../helpers/PhysicsHelper.hpp"
 #include "../helpers/SpawnHelper.hpp"
 
-void updateTowerTargetSelection( entt::registry& reg ) {
+void UpdateTowerTargetSelection( entt::registry& reg ) {
 	for ( auto&& [towerEnt, towerPos, tower] : reg.view<const wlPosition, wlTower>().each() ) {
 		// check current targetEnemy
 		if ( reg.valid( tower.targetEnemy ) && reg.all_of<wlPosition, wlEnemy>( tower.targetEnemy ) ) {
@@ -35,7 +35,7 @@ void updateTowerTargetSelection( entt::registry& reg ) {
 	}
 }
 
-void updateTowerLookAtEnemy( entt::registry& reg ) {
+void UpdateTowerLookAtEnemy( entt::registry& reg ) {
 	for ( auto&& [ent, pos, tower, sprite] : reg.view<const wlPosition, const wlTower, wlSprite>().each() ) {
 		if ( reg.valid( tower.targetEnemy ) ) {
 			const auto& posEnemy = reg.get<wlPosition>( tower.targetEnemy );
@@ -47,7 +47,7 @@ void updateTowerLookAtEnemy( entt::registry& reg ) {
 	}
 }
 
-void updateTowerAttack( entt::registry& reg, const double deltaTime ) {
+void UpdateTowerAttack( entt::registry& reg, const double deltaTime ) {
 	for ( auto&& [ent, pos, tower] : reg.view<const wlPosition, wlTower>().each() ) {
 		tower.currentTimeForFire += deltaTime;
 
