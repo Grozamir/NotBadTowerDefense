@@ -22,7 +22,7 @@ void UpdateBulletTracking( entt::registry& reg ) {
 void UpdateEnemyHealthOnHit( entt::registry& reg ) {
 	for ( auto&& [enemyEnt, enemyPos, enemy, enemyHealth] : reg.view<const wlPosition, const wlEnemy, wlHealth>().each() ) {
 		for ( auto&& [bulletEnt, bulletPos, bullet] : reg.view<const wlPosition, const wlBullet>().each() ) {
-			if ( checkCollision( enemyPos.value, bulletPos.value, enemy.radiusCollision, bullet.radiusCollision ) ) {
+			if ( CheckCollision( enemyPos.value, bulletPos.value, enemy.radiusCollision, bullet.radiusCollision ) ) {
 				enemyHealth.currentHealth = std::max( enemyHealth.currentHealth - bullet.damage, 0.0f );
 				if ( enemyHealth.currentHealth <= 0.01f ) {
 					reg.destroy( enemyEnt );

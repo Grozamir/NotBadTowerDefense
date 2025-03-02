@@ -2,7 +2,7 @@
 
 #include "../math/Vector.hpp"
 
-bool checkCollision( const wlVec2 posA, const wlVec2 posB, const float radiusA, const float radiusB ) {
+bool CheckCollision( const wlVec2 posA, const wlVec2 posB, const float radiusA, const float radiusB ) {
 	const float dx = posA.x - posB.x;
 	const float dy = posA.y - posB.y;
 	const float distSq = dx * dx + dy * dy;

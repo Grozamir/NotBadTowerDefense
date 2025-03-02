@@ -3,6 +3,8 @@
 #include "entt.hpp"
 #include "SDL3_ttf/SDL_ttf.h"
 
+#include "../math/Vector.hpp"
+
 enum class xAnchor_t : uint8_t {
 	none = 0,
 	left,
@@ -33,6 +35,8 @@ struct wlUIChild {
 	entt::entity			parentEnt = entt::null;
 };
 
+struct wlHideUIElement {};
+
 struct wlUISprite {
 	SDL_Texture* texture{ nullptr };
 	SDL_FRect srcRect{};
@@ -50,4 +54,8 @@ struct wlButton {
 
 struct wlText {
 	TTF_Text* text;
+};
+
+struct wlPanelMaps {
+	std::unordered_map<std::string_view, entt::entity> panels;
 };

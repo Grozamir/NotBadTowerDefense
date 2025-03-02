@@ -10,7 +10,7 @@
 #include "../resources/Sprites.hpp"
 
 
-entt::entity spawnBaseBullet( entt::registry& reg, entt::entity targetEnemy, wlVec2 pos, float damage, float radiusCollision, float speed ) {
+entt::entity SpawnBaseBullet( entt::registry& reg, entt::entity targetEnemy, wlVec2 pos, float damage, float radiusCollision, float speed ) {
 	const auto bulletEnt = reg.create();
 	reg.emplace<wlBullet>( bulletEnt, damage, radiusCollision, targetEnemy );
 	reg.emplace<wlPosition>( bulletEnt, pos );
@@ -22,7 +22,7 @@ entt::entity spawnBaseBullet( entt::registry& reg, entt::entity targetEnemy, wlV
 	return bulletEnt;
 }
 
-entt::entity spawnBaseEnemy( entt::registry& reg, wlVec2 pos ) {
+entt::entity SpawnBaseEnemy( entt::registry& reg, wlVec2 pos ) {
 	auto& levelState = reg.ctx().get<wlLevelState>();
 	const auto enemyEnt = reg.create();
 	reg.emplace<wlEnemy>( enemyEnt, 25.0f );

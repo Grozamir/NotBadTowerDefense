@@ -77,7 +77,8 @@ target_sources(${PROJECT_NAME} PRIVATE
 "src/resources/Atlas.cpp"
 "src/scenes/Scene_MainMenu.cpp"
 "src/systems/UIEvents.cpp"
-"src/resources/Resources.cpp")
+"src/resources/Resources.cpp"
+"src/helpers/UIHelper.cpp")
 
 
 

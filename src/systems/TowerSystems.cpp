@@ -14,7 +14,7 @@ void UpdateTowerTargetSelection( entt::registry& reg ) {
 		if ( reg.valid( tower.targetEnemy ) && reg.all_of<wlPosition, wlEnemy>( tower.targetEnemy ) ) {
 			const auto targetEnemyPos = reg.get<wlPosition>( tower.targetEnemy ).value;
 			const auto targetEnemy_radiusCollision = reg.get<wlEnemy>( tower.targetEnemy ).radiusCollision;
-			if ( checkCollision( targetEnemyPos, towerPos.value, targetEnemy_radiusCollision, tower.radiusAttack ) ) {
+			if ( CheckCollision( targetEnemyPos, towerPos.value, targetEnemy_radiusCollision, tower.radiusAttack ) ) {
 				continue;
 			}
 		}
@@ -22,7 +22,7 @@ void UpdateTowerTargetSelection( entt::registry& reg ) {
 		// update targetEnemy
 		bool foundEnemy = false;
 		for ( auto&& [enemyEnt, enemyPos, enemy] : reg.view<const wlPosition, const wlEnemy>().each() ) {
-			if ( checkCollision( enemyPos.value, towerPos.value, enemy.radiusCollision, tower.radiusAttack ) ) {
+			if ( CheckCollision( enemyPos.value, towerPos.value, enemy.radiusCollision, tower.radiusAttack ) ) {
 				foundEnemy = true;
 				tower.targetEnemy = enemyEnt;
 				break;
@@ -54,7 +54,7 @@ void UpdateTowerAttack( entt::registry& reg, const double deltaTime ) {
 		if ( tower.currentTimeForFire > tower.fireRate ) {
 			tower.currentTimeForFire = 0.0f;
 			if ( reg.valid( tower.targetEnemy ) && reg.all_of<wlPosition, wlEnemy>( tower.targetEnemy ) ) {
-				spawnBaseBullet( reg, tower.targetEnemy, pos.value + wlVec2{ 25.0f, 25.0f }, 1.0f, 5.0f, 800.0f );
+				SpawnBaseBullet( reg, tower.targetEnemy, pos.value + wlVec2{ 25.0f, 25.0f }, 1.0f, 5.0f, 800.0f );
 			}
 		}
 	}
