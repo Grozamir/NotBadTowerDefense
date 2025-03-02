@@ -72,7 +72,7 @@ void wlScene_TestGame::Start() {
 
 	// Button "Open Pause"
 	UIFactory::CreateButton( reg, "pause_btn",
-							 wlVec2{ 4.0f, 4.0f }, xAnchor_t::right, yAnchor_t::top, wlVec2{ 15.0f, 15.0f },
+							 { 4.0f, 4.0f }, xAnchor_t::right, yAnchor_t::top, { 15.0f, 15.0f },
 							 []( entt::registry& reg ) {
 								 auto& panelMaps = reg.ctx().get<wlPanelMaps>();
 								 reg.remove<wlHideUIElement>( panelMaps.panels["PauseMenu"] );
@@ -80,7 +80,7 @@ void wlScene_TestGame::Start() {
 
 	{  // Pause Menu
 		const auto pauseMenuPanelEnt = UIFactory::CreatePanel( reg, "btn_01",
-															   wlVec2{ 30.0f, 30.0f }, xAnchor_t::center, yAnchor_t::center );
+															   { 30.0f, 30.0f }, xAnchor_t::center, yAnchor_t::center );
 		panelMaps.panels["PauseMenu"] = pauseMenuPanelEnt;
 		reg.emplace<wlHideUIElement>( pauseMenuPanelEnt );
 
@@ -88,8 +88,8 @@ void wlScene_TestGame::Start() {
 		UIFactory::CreateText( reg, "Pause", pauseMenuPanelEnt, xAnchor_t::center, yAnchor_t::top, 1 );
 
 		// Button "Back To Game"
-		const auto btnBackToGame = UIFactory::CreateButton( reg, "btn_01", wlVec2{ 7.0f, 4.0f },								//
-															xAnchor_t::center, yAnchor_t::center, wlVec2{ 0.0f, -100.0f },		//
+		const auto btnBackToGame = UIFactory::CreateButton( reg, "btn_01", { 7.0f, 4.0f },										//
+															xAnchor_t::center, yAnchor_t::center, { 0.0f, -100.0f },			//
 															[]( entt::registry& reg ) {											//
 																auto& panelMaps = reg.ctx().get<wlPanelMaps>();					//
 																reg.emplace<wlHideUIElement>( panelMaps.panels["PauseMenu"] );	//
@@ -99,7 +99,7 @@ void wlScene_TestGame::Start() {
 		UIFactory::CreateText( reg, "Back To Game", btnBackToGame, xAnchor_t::center, yAnchor_t::center, 1 );
 
 		// Button "Main Menu"
-		const auto btnMainMenuEnt = UIFactory::CreateButton( reg, "btn_01", wlVec2{ 7.0f, 4.0f },								 //
+		const auto btnMainMenuEnt = UIFactory::CreateButton( reg, "btn_01", { 7.0f, 4.0f },										 //
 															 xAnchor_t::center, yAnchor_t::center, {},							 //
 															 [sceneMgr = appState->app->GetSceneMgr()]( entt::registry& reg ) {	 //
 																 sceneMgr->ChangeScene( sceneType_t::MAIN_MENU );				 //
@@ -109,8 +109,8 @@ void wlScene_TestGame::Start() {
 		UIFactory::CreateText( reg, "Main Menu", btnMainMenuEnt, xAnchor_t::center, yAnchor_t::center, 2 );
 
 		// Button "Restart Game"
-		const auto btnRestartGame = UIFactory::CreateButton( reg, "btn_01", wlVec2{ 7.0f, 4.0f },								 //
-															 xAnchor_t::center, yAnchor_t::center, wlVec2{ 0.0f, 100.0f },		 //
+		const auto btnRestartGame = UIFactory::CreateButton( reg, "btn_01", { 7.0f, 4.0f },										 //
+															 xAnchor_t::center, yAnchor_t::center, { 0.0f, 100.0f },			 //
 															 [sceneMgr = appState->app->GetSceneMgr()]( entt::registry& reg ) {	 //
 																 sceneMgr->ChangeScene( sceneType_t::TEST_GAME );				 //
 															 },

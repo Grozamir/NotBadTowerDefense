@@ -20,7 +20,7 @@ bool HasHiddenParent( entt::registry& reg, entt::entity ent ) {
 }
 
 entt::entity UIFactory::CreateButton( entt::registry& reg, const std::string& spriteName,
-									  const wlVec2& scale, const xAnchor_t xAnchor, const yAnchor_t yAnchor, const wlVec2& position,
+									  const wlVec2 scale, const xAnchor_t xAnchor, const yAnchor_t yAnchor, const wlVec2 position,
 									  std::function<void( entt::registry& )> onClick, entt::entity parent, const int positionZ ) {
 	const auto btnEnt = reg.create();
 	auto& btn = reg.emplace<wlButton>( btnEnt );
@@ -46,14 +46,17 @@ entt::entity UIFactory::CreateButton( entt::registry& reg, const std::string& sp
 }
 
 entt::entity UIFactory::CreateText( entt::registry& reg, const std::string& text, entt::entity parent,
-									const xAnchor_t xAnchor, const yAnchor_t yAnchor, const int positionZ ) {
+									const xAnchor_t xAnchor, const yAnchor_t yAnchor, const int positionZ,
+									const wlVec2 position, const SDL_Color color ) {
 	const auto textEnt = reg.create();
 	auto& textComp = reg.emplace<wlText>( textEnt );
 	textComp.text = TTF_CreateText( appState->textEngine, wlFonts::mainFont, text.c_str(), 0 );
+	TTF_SetTextColor( textComp.text, color.r, color.g, color.b, color.a );
 
 	auto& uiElm = reg.emplace<wlUIElement>( textEnt );
 	uiElm.xAnchor = xAnchor;
 	uiElm.yAnchor = yAnchor;
+	uiElm.position = position;
 	uiElm.positionZ = positionZ;
 
 	if ( parent != entt::null ) {
@@ -65,7 +68,7 @@ entt::entity UIFactory::CreateText( entt::registry& reg, const std::string& text
 }
 
 entt::entity UIFactory::CreatePanel( entt::registry& reg, const std::string& spriteName,
-									 const wlVec2& scale, const xAnchor_t xAnchor, const yAnchor_t yAnchor ) {
+									 const wlVec2 scale, const xAnchor_t xAnchor, const yAnchor_t yAnchor ) {
 	const auto panelEnt = reg.create();
 	auto& sprite = reg.emplace<wlUISprite>( panelEnt );
 	sprite.texture = wlSprites::uiAtlas.texture;

@@ -7,7 +7,7 @@ struct wlVec2 {
 	float			y;
 
 					wlVec2();
-	explicit		wlVec2( const float t_x, const float t_y );
+					wlVec2( const float t_x, const float t_y );
 
 	wlVec2			operator*( const wlVec2& vec ) const;
 	wlVec2			operator/( const wlVec2& vec ) const;
