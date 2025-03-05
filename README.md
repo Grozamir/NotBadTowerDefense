@@ -1,1 +1,1 @@
-git clone --recursive "link this rep"
+git clone --recursive https://github.com/Grozamir/NotBadTowerDefense.git

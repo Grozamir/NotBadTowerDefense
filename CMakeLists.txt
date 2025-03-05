@@ -78,7 +78,8 @@ target_sources(${PROJECT_NAME} PRIVATE
 "src/scenes/Scene_MainMenu.cpp"
 "src/systems/UIEvents.cpp"
 "src/resources/Resources.cpp"
-"src/helpers/UIHelper.cpp")
+"src/helpers/UIHelper.cpp" 
+"src/helpers/TowerBuldingHelper.cpp")
 
 
 
