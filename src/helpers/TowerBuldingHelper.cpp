@@ -8,6 +8,11 @@
 #include "../resources/Sprites.hpp"
 
 void TryBuildTower( entt::registry& reg, const SDL_Event* event ) {
+	auto& gameState = reg.ctx().get<wlGameState>();
+	if (gameState.money < priceBaseTower) {
+		return;
+	}
+
 	const auto& offset = reg.ctx().get<wlCenteringOffset>();
 	auto& levelState = reg.ctx().get<wlLevelState>();
 	const float mousePositionX = event->button.x - offset.value.x;
@@ -25,7 +30,7 @@ void TryBuildTower( entt::registry& reg, const SDL_Event* event ) {
 			const auto towerEnt = reg.create();
 			reg.emplace<wlPosition>( towerEnt, wlVec2{ levelState.offsetCell * indexCellX + levelState.offsetCell / 4.0f,
 													   levelState.offsetCell * indexCellY + levelState.offsetCell / 4.0f } );
-			reg.emplace<wlTower>( towerEnt, 0.2f );
+			reg.emplace<wlTower>( towerEnt, 0.25f );
 			auto& sprite = reg.emplace<wlSprite>( towerEnt );
 			sprite.texture = wlSprites::gameAtlas.texture;
 			sprite.srcRect = wlSprites::gameAtlas.GetSpriteData( "base_tower" ).srcRect;
@@ -33,6 +38,8 @@ void TryBuildTower( entt::registry& reg, const SDL_Event* event ) {
 			sprite.scale = 6.0f;
 
 			levelState.posTowers.push_back( { indexCellY, indexCellX } );
+
+			gameState.SetMoney( gameState.money - priceBaseTower );
 		}
 	}
 }

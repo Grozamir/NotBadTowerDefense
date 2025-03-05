@@ -2,8 +2,10 @@
 
 #include "../components/GameComponents.hpp"
 #include "../components/PhysicsComponents.hpp"
+#include "../components/GameContextComponents.hpp"
 
 #include "../helpers/PhysicsHelper.hpp"
+
 
 void UpdateBulletTracking( entt::registry& reg ) {
 	for ( auto&& [ent, pos, vel, bullet] : reg.view<wlPosition, wlVelocity, wlBullet>().each() ) {
@@ -25,6 +27,7 @@ void UpdateEnemyHealthOnHit( entt::registry& reg ) {
 			if ( CheckCollision( enemyPos.value, bulletPos.value, enemy.radiusCollision, bullet.radiusCollision ) ) {
 				enemyHealth.currentHealth = std::max( enemyHealth.currentHealth - bullet.damage, 0.0f );
 				if ( enemyHealth.currentHealth <= 0.01f ) {
+					reg.ctx().get<wlGameState>().AddMoney( incomeForKillBaseEnemy );
 					reg.destroy( enemyEnt );
 				}
 

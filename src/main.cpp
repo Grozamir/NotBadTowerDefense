@@ -28,7 +28,6 @@ SDL_AppResult SDL_AppIterate( void *appstate ) {
 SDL_AppResult SDL_AppEvent( void *appstate, SDL_Event *event ) {
 	if ( event ) {
 		app.OnEvent( event );
-		// std::cerr << "SDL_AppEvent: type = " << event->type << ", timestamp = " << event->common.timestamp << std::endl;
 	}
 
 	if ( event && event->type == SDL_EVENT_QUIT ) {

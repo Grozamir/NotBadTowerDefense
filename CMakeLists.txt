@@ -79,7 +79,8 @@ target_sources(${PROJECT_NAME} PRIVATE
 "src/systems/UIEvents.cpp"
 "src/resources/Resources.cpp"
 "src/helpers/UIHelper.cpp" 
-"src/helpers/TowerBuldingHelper.cpp")
+"src/helpers/TowerBuldingHelper.cpp" 
+"src/components/GameContextComponents.cpp")
 
 
 

@@ -1,10 +1,7 @@
 #include "Scene_MainMenu.hpp"
 
-#include "SDL3_ttf/SDL_ttf.h"
-
 #include "SceneManager.hpp"
 
-#include "../components/PhysicsComponents.hpp"
 #include "../components/UIComponents.hpp"
 
 #include "../systems/Rendering.hpp"
@@ -32,6 +29,9 @@ void wlScene_MainMenu::Start() {
 }
 
 void wlScene_MainMenu::OnUpdate( double deltaTime ) {
+	SDL_SetRenderDrawColor( appState->renderer, 89, 89, 89, 255 );
+	SDL_RenderClear( appState->renderer );
+
 	DrawUIElements( reg );
 }
 

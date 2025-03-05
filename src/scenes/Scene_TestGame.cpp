@@ -34,6 +34,14 @@ void UpdateOffset( entt::registry& reg ) {
 }  // namespace
 
 void wlScene_TestGame::Start() {
+	{
+		auto& gameState = reg.ctx().emplace<wlGameState>();
+		gameState.txtMoney = reg.get<wlText>(UIFactory::CreateText( reg, "...",
+											entt::null, xAnchor_t::left, yAnchor_t::top, 1, { 25.0f, 10.0f} ) ).text;
+
+		gameState.SetMoney( 20 );
+	}
+	
 	auto& levelState = reg.ctx().emplace<wlLevelState>();
 	levelState.sourceMap = &game::level::TestLevel;
 	levelState.currentMap = game::level::TestLevel;
@@ -154,10 +162,15 @@ void wlScene_TestGame::OnUpdate( const double deltaTime ) {
 
 	// rendering
 
+	SDL_SetRenderDrawColor( appState->renderer, 95, 84, 84, 255 );
+	SDL_RenderClear( appState->renderer );
+
 	UpdateDstRectSprites( reg );
 	DrawSprites( reg );
 
 	DrawUIElements( reg );
+
+	SDL_SetRenderDrawColor( appState->renderer, 100, 100, 100, 255 );
 }
 
 void wlScene_TestGame::OnEvent( SDL_Event* event ) {
