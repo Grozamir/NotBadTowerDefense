@@ -31,8 +31,7 @@ SDL_AppResult SDL_AppEvent( void *appstate, SDL_Event *event ) {
 	}
 
 	if ( event && event->type == SDL_EVENT_QUIT ) {
-		std::cerr << "SDL_EVENT_QUIT received" << std::endl;
-		return SDL_APP_FAILURE;
+		return SDL_APP_SUCCESS;
 	}
 	return SDL_APP_CONTINUE;
 }
