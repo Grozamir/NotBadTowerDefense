@@ -1,11 +1,12 @@
 #include "BulletSystems.hpp"
 
+#include <algorithm>
+
 #include "../components/GameComponents.hpp"
-#include "../components/PhysicsComponents.hpp"
 #include "../components/GameContextComponents.hpp"
+#include "../components/PhysicsComponents.hpp"
 
 #include "../helpers/PhysicsHelper.hpp"
-
 
 void UpdateBulletTracking( entt::registry& reg ) {
 	for ( auto&& [ent, pos, vel, bullet] : reg.view<wlPosition, wlVelocity, wlBullet>().each() ) {

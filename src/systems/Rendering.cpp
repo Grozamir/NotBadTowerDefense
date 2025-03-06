@@ -63,7 +63,8 @@ void UpdateUIElementRecursively( entt::registry& reg, const entt::entity ent, co
 		srcRect = comp->srcRect;
 	}
 	if ( const auto comp = reg.try_get<wlText>( ent ) ) {
-		int textWidth, textHeight;
+		int textWidth{ 0 };
+		int textHeight{ 0 };
 		TTF_GetTextSize( comp->text, &textWidth, &textHeight );
 		srcRect.w = textWidth;
 		srcRect.h = textHeight;

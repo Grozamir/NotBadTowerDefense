@@ -37,7 +37,7 @@ SDL_AppResult SDL_AppEvent( void *appstate, SDL_Event *event ) {
 }
 
 void SDL_AppQuit( void *appstate, SDL_AppResult result ) {
-	auto* const state = static_cast<wlAppState *>( appstate );
+	auto *const state = static_cast<wlAppState *>( appstate );
 	if ( state ) {
 		if ( state->renderer ) {
 			SDL_DestroyRenderer( state->renderer );

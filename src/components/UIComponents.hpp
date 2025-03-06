@@ -1,7 +1,8 @@
 #pragma once
 
-#include "entt.hpp"
 #include "SDL3_ttf/SDL_ttf.h"
+
+#include "entt.hpp"
 
 #include "../math/Vector.hpp"
 
@@ -49,7 +50,7 @@ struct wlUISprite {
 struct wlButton {
 	bool					isPressed{ false };
 
-	std::function<void( entt::registry& )> onClick;
+	std::function<void( entt::registry& )> onClick{};
 };
 
 struct wlText {
@@ -57,5 +58,5 @@ struct wlText {
 };
 
 struct wlPanelMaps {
-	std::unordered_map<std::string_view, entt::entity> panels;
+	std::unordered_map<std::string_view, entt::entity> panels{};
 };

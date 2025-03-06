@@ -7,16 +7,16 @@ struct wlVec2 {
 	float			y;
 
 					wlVec2();
-					wlVec2( const float t_x, const float t_y );
+					wlVec2( float t_x, float t_y );
 
 	wlVec2			operator*( const wlVec2& vec ) const;
 	wlVec2			operator/( const wlVec2& vec ) const;
 	wlVec2			operator+( const wlVec2& vec ) const;
 	wlVec2			operator-( const wlVec2& vec ) const;
 
-	wlVec2			operator*( const float value ) const;
+	wlVec2			operator*( float value ) const;
 
-	wlVec2&			operator*=( const float value );
+	wlVec2&			operator*=( float value );
 	
 
 	bool			operator==( const wlVec2& vec ) const;

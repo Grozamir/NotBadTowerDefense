@@ -10,8 +10,8 @@
 #include "../components/UIComponents.hpp"
 
 #include "../helpers/SpawnHelper.hpp"
-#include "../helpers/UIHelper.hpp"
 #include "../helpers/TowerBuldingHelper.hpp"
+#include "../helpers/UIHelper.hpp"
 
 #include "../resources/Sprites.hpp"
 
@@ -36,12 +36,13 @@ void UpdateOffset( entt::registry& reg ) {
 void wlScene_TestGame::Start() {
 	{
 		auto& gameState = reg.ctx().emplace<wlGameState>();
-		gameState.txtMoney = reg.get<wlText>(UIFactory::CreateText( reg, "...",
-											entt::null, xAnchor_t::left, yAnchor_t::top, 1, { 25.0f, 10.0f} ) ).text;
+		gameState.txtMoney = reg.get<wlText>( UIFactory::CreateText( reg, "...",
+																	 entt::null, xAnchor_t::left, yAnchor_t::top, 1, { 25.0f, 10.0f } ) )
+								 .text;
 
 		gameState.SetMoney( 20 );
 	}
-	
+
 	auto& levelState = reg.ctx().emplace<wlLevelState>();
 	levelState.sourceMap = &game::level::TestLevel;
 	levelState.currentMap = game::level::TestLevel;

@@ -1,7 +1,7 @@
 #include "MovementSystems.hpp"
 
-#include "../components/PhysicsComponents.hpp"
 #include "../components/NavigationComponents.hpp"
+#include "../components/PhysicsComponents.hpp"
 
 void UpdatePosition( entt::registry& reg, const double deltaTime ) {
 	for ( auto&& [ent, pos, vel] : reg.view<wlPosition, const wlVelocity>().each() ) {

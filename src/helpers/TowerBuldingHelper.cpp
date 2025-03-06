@@ -1,9 +1,9 @@
 #include "TowerBuldingHelper.hpp"
 
-#include "../components/RenderComponents.hpp"
+#include "../components/GameComponents.hpp"
 #include "../components/GameContextComponents.hpp"
 #include "../components/PhysicsComponents.hpp"
-#include "../components/GameComponents.hpp"
+#include "../components/RenderComponents.hpp"
 
 #include "../resources/Sprites.hpp"
 
@@ -28,8 +28,8 @@ void TryBuildTower( entt::registry& reg, const SDL_Event* event ) {
 			levelState.currentMap[indexCellY][indexCellX] = cellType_t::TOWER;
 
 			const auto towerEnt = reg.create();
-			reg.emplace<wlPosition>( towerEnt, wlVec2{ levelState.offsetCell * indexCellX + levelState.offsetCell / 4.0f,
-													   levelState.offsetCell * indexCellY + levelState.offsetCell / 4.0f } );
+			reg.emplace<wlPosition>( towerEnt, wlVec2{( levelState.offsetCell * indexCellX ) + ( levelState.offsetCell / 4.0f ),
+			                                          ( levelState.offsetCell * indexCellY ) + ( levelState.offsetCell / 4.0f )} );
 			reg.emplace<wlTower>( towerEnt, 0.25f );
 			auto& sprite = reg.emplace<wlSprite>( towerEnt );
 			sprite.texture = wlSprites::gameAtlas.texture;

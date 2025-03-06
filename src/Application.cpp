@@ -2,7 +2,7 @@
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_render.h>
-#include "SDL3_ttf/SDL_ttf.h"
+#include <SDL3_ttf/SDL_ttf.h>
 
 #include <iostream>
 
@@ -10,9 +10,8 @@
 
 #include "scenes/SceneManager.hpp"
 
-wlApplication::wlApplication() : 
-							state	{ new wlAppState },
-							sceneMgr{ new wlSceneManager } {
+wlApplication::wlApplication() : state{ new wlAppState },
+								 sceneMgr{ new wlSceneManager } {
 	appState = state;
 	appState->app = this;
 	oldTime = SDL_GetPerformanceCounter();
@@ -72,18 +71,18 @@ void wlApplication::OnUpdate() {
 	SDL_RenderClear( state->renderer );
 
 	const Uint64 currentTime = SDL_GetPerformanceCounter();
-	deltaTime = static_cast<double>( currentTime - oldTime ) / static_cast<double>(SDL_GetPerformanceFrequency());
+	deltaTime = static_cast<double>( currentTime - oldTime ) / static_cast<double>( SDL_GetPerformanceFrequency() );
 	oldTime = currentTime;
-	
-	sceneMgr->OnUpdate( deltaTime);
+
+	sceneMgr->OnUpdate( deltaTime );
 
 	SDL_RenderPresent( state->renderer );
 }
 
 void wlApplication::OnEvent( SDL_Event* event ) const {
-	if (event->type == SDL_EVENT_WINDOW_RESIZED) {
-		state->currentWidthScreen	= event->window.data1;
-		state->currentHeightScreen	= event->window.data2;
+	if ( event->type == SDL_EVENT_WINDOW_RESIZED ) {
+		state->currentWidthScreen = event->window.data1;
+		state->currentHeightScreen = event->window.data2;
 	}
 	sceneMgr->OnEvent( event );
 }

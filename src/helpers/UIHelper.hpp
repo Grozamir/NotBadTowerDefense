@@ -1,7 +1,8 @@
 #pragma once
 
-#include "entt.hpp"
 #include "SDL3/SDL_pixels.h"
+
+#include "entt.hpp"
 
 #include "../math/Vector.hpp"
 

@@ -16,8 +16,8 @@ struct wlAppState {
 	TTF_TextEngine*			textEngine{ nullptr };
 	wlApplication*			app{ nullptr };
 
-	int32_t					currentWidthScreen{1280};
-	int32_t					currentHeightScreen{ 720 };
+	float					currentWidthScreen{ 1280.0f };
+	float					currentHeightScreen{ 720.0f };
 };
 
 extern wlAppState* appState;
