@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-#include "application.hpp"
+#include "Application.hpp"
 
 wlApplication app;
 
