@@ -57,7 +57,7 @@ inline wlVec2& wlVec2::operator*=( const float value ) {
 }
 
 inline bool wlVec2::operator==( const wlVec2& vec ) const {
-	return std::fabsf( x - vec.x ) < 1e-6 && std::fabsf( y - vec.y ) < 1e-6;
+	return std::fabs( x - vec.x ) < 1e-6 && std::fabs( y - vec.y ) < 1e-6;
 }
 
 inline void wlVec2::Normalize() {
@@ -70,5 +70,5 @@ inline void wlVec2::Normalize() {
 }
 
 inline float wlVec2::Length() const {
-	return std::sqrt( x * x + y * y );;
+	return std::sqrt( x * x + y * y );
 }

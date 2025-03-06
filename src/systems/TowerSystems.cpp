@@ -1,6 +1,10 @@
 #include "TowerSystems.hpp"
 
+#ifdef _WIN32
 #include <corecrt_math_defines.h>
+#else
+#include "cmath"
+#endif
 
 #include "../components/GameComponents.hpp"
 #include "../components/PhysicsComponents.hpp"

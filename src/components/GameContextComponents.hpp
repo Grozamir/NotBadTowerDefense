@@ -2,6 +2,8 @@
 
 #include <vector>
 
+#include <cstdint>
+
 #include "../math/Vector.hpp"
 
 struct TTF_Text;
