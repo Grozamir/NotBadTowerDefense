@@ -85,6 +85,8 @@ void wlScene_TestGame::Start() {
 							 []( entt::registry& reg ) {
 								 auto& panelMaps = reg.ctx().get<wlPanelMaps>();
 								 reg.remove<wlHideUIElement>( panelMaps.panels["PauseMenu"] );
+
+								 reg.ctx().get<wlGameState>().isPaused = true;
 							 } );
 
 	{  // Pause Menu
@@ -102,6 +104,7 @@ void wlScene_TestGame::Start() {
 															[]( entt::registry& reg ) {											//
 																auto& panelMaps = reg.ctx().get<wlPanelMaps>();					//
 																reg.emplace<wlHideUIElement>( panelMaps.panels["PauseMenu"] );	//
+																reg.ctx().get<wlGameState>().isPaused = false;					//
 															},
 															pauseMenuPanelEnt );
 
@@ -137,29 +140,31 @@ void wlScene_TestGame::OnUpdate( const double deltaTime ) {
 	static double currentTimeForSpawn;
 	currentTimeForSpawn += deltaTime;
 
-	if ( currentTimeForSpawn > 1.0 ) {
-		currentTimeForSpawn = 0.0;
-		SpawnBaseEnemy( reg, wlVec2{
-								 levelState.pathForEnemy[0].second * levelState.offsetCell - 50.0f,
-								 levelState.pathForEnemy[0].first * levelState.offsetCell + 50.0f } );
+	if ( !reg.ctx().get<wlGameState>().isPaused ) {
+		if ( currentTimeForSpawn > 1.0 ) {
+			currentTimeForSpawn = 0.0;
+			SpawnBaseEnemy( reg, wlVec2{
+									 levelState.pathForEnemy[0].second * levelState.offsetCell - 50.0f,
+									 levelState.pathForEnemy[0].first * levelState.offsetCell + 50.0f } );
+		}
+
+		UpdatePosition( reg, deltaTime );
+		UpdatePathFollowing( reg );
+
+		// game logic
+
+		UpdateTowerTargetSelection( reg );
+
+		UpdateTowerAttack( reg, deltaTime );
+
+		UpdateTowerLookAtEnemy( reg );
+
+		UpdateBulletTracking( reg );
+
+		UpdateEnemyHealthOnHit( reg );
+
+		UpdateDestroyBulletOnInvalidTarget( reg );
 	}
-
-	UpdatePosition( reg, deltaTime );
-	UpdatePathFollowing( reg );
-
-	// game logic
-
-	UpdateTowerTargetSelection( reg );
-
-	UpdateTowerAttack( reg, deltaTime );
-
-	UpdateTowerLookAtEnemy( reg );
-
-	UpdateBulletTracking( reg );
-
-	UpdateEnemyHealthOnHit( reg );
-
-	UpdateDestroyBulletOnInvalidTarget( reg );
 
 	// rendering
 

@@ -41,10 +41,12 @@ struct wlCenteringOffset {
 };
 
 struct wlGameState {
+	bool					isPaused{ false };
+
 	int32_t					money{ 0 };
 
 
-	TTF_Text *			txtMoney{ nullptr };
+	TTF_Text *				txtMoney{ nullptr };
 
 	void AddMoney( const int32_t addedMoney) {
 		money += addedMoney;
