@@ -3,7 +3,7 @@
 #include <SDL3/SDL_render.h>
 
 struct wlSprite {
-	SDL_Texture *			texture{ nullptr };
+	SDL_Texture *			texture = nullptr;
 	SDL_FRect				srcRect{};
 	SDL_FRect				dstRect{};
 	SDL_Color				color{};

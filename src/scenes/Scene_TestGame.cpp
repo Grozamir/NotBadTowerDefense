@@ -34,15 +34,6 @@ void UpdateOffset( entt::registry& reg ) {
 }  // namespace
 
 void wlScene_TestGame::Start() {
-	{
-		auto& gameState = reg.ctx().emplace<wlGameState>();
-		gameState.txtMoney = reg.get<wlText>( UIFactory::CreateText( reg, "...",
-																	 entt::null, xAnchor_t::left, yAnchor_t::top, 1, { 25.0f, 10.0f } ) )
-								 .text;
-
-		gameState.SetMoney( 20 );
-	}
-
 	auto& levelState = reg.ctx().emplace<wlLevelState>();
 	levelState.sourceMap = &game::level::TestLevel;
 	levelState.currentMap = game::level::TestLevel;
@@ -83,10 +74,14 @@ void wlScene_TestGame::Start() {
 	UIFactory::CreateButton( reg, "pause_btn",
 							 { 4.0f, 4.0f }, xAnchor_t::right, yAnchor_t::top, { 15.0f, 15.0f },
 							 []( entt::registry& reg ) {
+								 auto& gameState = reg.ctx().get<wlGameState>();
+								 if (gameState.isPaused) {
+									 return;
+								 }
 								 auto& panelMaps = reg.ctx().get<wlPanelMaps>();
 								 reg.remove<wlHideUIElement>( panelMaps.panels["PauseMenu"] );
 
-								 reg.ctx().get<wlGameState>().isPaused = true;
+								 gameState.isPaused = true;
 							 } );
 
 	{  // Pause Menu
@@ -129,6 +124,54 @@ void wlScene_TestGame::Start() {
 															 pauseMenuPanelEnt );
 
 		UIFactory::CreateText( reg, "Restart Game", btnRestartGame, xAnchor_t::center, yAnchor_t::center, 2 );
+	}
+
+	{  // Defeat Menu
+		const auto defeatMenuPanelEnt = UIFactory::CreatePanel( reg, "btn_01",
+															   { 30.0f, 30.0f }, xAnchor_t::center, yAnchor_t::center );
+		panelMaps.panels["DefeatMenu"] = defeatMenuPanelEnt;
+		reg.emplace<wlHideUIElement>( defeatMenuPanelEnt );
+
+		// Title "Defeat"
+		UIFactory::CreateText( reg, "Defeat", defeatMenuPanelEnt, xAnchor_t::center, yAnchor_t::top, 1, {}, { 255, 0, 0, 255 } );
+
+		// Button "Main Menu"
+		const auto btnMainMenuEnt = UIFactory::CreateButton( reg, "btn_01", { 7.0f, 4.0f },										 //
+															 xAnchor_t::center, yAnchor_t::center, {},							 //
+															 [sceneMgr = appState->app->GetSceneMgr()]( entt::registry& reg ) {	 //
+																 sceneMgr->ChangeScene( sceneType_t::MAIN_MENU );				 //
+															 },
+															 defeatMenuPanelEnt );
+
+		UIFactory::CreateText( reg, "Main Menu", btnMainMenuEnt, xAnchor_t::center, yAnchor_t::center, 2 );
+
+		// Button "Restart Game"
+		const auto btnRestartGame = UIFactory::CreateButton( reg, "btn_01", { 7.0f, 4.0f },										 //
+															 xAnchor_t::center, yAnchor_t::center, { 0.0f, 100.0f },			 //
+															 [sceneMgr = appState->app->GetSceneMgr()]( entt::registry& reg ) {	 //
+																 sceneMgr->ChangeScene( sceneType_t::TEST_GAME );				 //
+															 },
+															 defeatMenuPanelEnt );
+
+		UIFactory::CreateText( reg, "Restart Game", btnRestartGame, xAnchor_t::center, yAnchor_t::center, 2 );
+	}
+
+
+	// Game State
+	{
+		auto& gameState = reg.ctx().emplace<wlGameState>();
+		gameState.txtMoney = reg.get<wlText>( UIFactory::CreateText( reg, "...",
+							entt::null, xAnchor_t::left, yAnchor_t::top, 1, { 25.0f, 10.0f } ) ).text;
+
+		gameState.SetMoney( 20 );
+
+		gameState.onDefeat = []( entt::registry& reg ) {
+			auto& panelMaps = reg.ctx().get<wlPanelMaps>();
+			reg.remove<wlHideUIElement>( panelMaps.panels["DefeatMenu"] );
+			reg.ctx().get<wlGameState>().isPaused = true;
+
+			UpdateDstUIElements( reg );
+		};
 	}
 
 	UpdateDstUIElements( reg );

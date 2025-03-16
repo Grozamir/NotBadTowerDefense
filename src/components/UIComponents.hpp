@@ -39,7 +39,7 @@ struct wlUIChild {
 struct wlHideUIElement {};
 
 struct wlUISprite {
-	SDL_Texture* texture{ nullptr };
+	SDL_Texture* texture = nullptr;
 	SDL_FRect srcRect{};
 	SDL_Color color{};
 

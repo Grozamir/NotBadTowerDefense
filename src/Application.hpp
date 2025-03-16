@@ -11,10 +11,10 @@ union  SDL_Event;
 class wlSceneManager;
 
 struct wlAppState {
-	SDL_Window*				window{ nullptr };
-	SDL_Renderer*			renderer{ nullptr };
-	TTF_TextEngine*			textEngine{ nullptr };
-	wlApplication*			app{ nullptr };
+	SDL_Window*				window = nullptr;
+	SDL_Renderer*			renderer = nullptr;
+	TTF_TextEngine*			textEngine = nullptr;
+	wlApplication*			app = nullptr;
 
 	float					currentWidthScreen{ 1280.0f };
 	float					currentHeightScreen{ 720.0f };

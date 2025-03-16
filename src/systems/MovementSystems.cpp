@@ -21,7 +21,12 @@ void UpdatePathFollowing( entt::registry& reg ) {
 		}
 
 		if ( ( pos.value - cellTargetPos ).Length() < 2.0f ) {
-			moveByPath.NextPoint();
+			if (!moveByPath.NextPoint()) {
+				reg.destroy( ent );
+				auto& gameState = reg.ctx().get<wlGameState>();
+				gameState.TakeDamage( reg, 1 );
+				continue;
+			}
 
 			if ( moveByPath.currentTargetPointIndex < moveByPath.path.size() ) {
 				const auto& [targetColumn, targetRow] = moveByPath.path[moveByPath.currentTargetPointIndex];

@@ -4,6 +4,8 @@
 
 #include <cstdint>
 
+#include <entt.hpp>
+
 #include "../math/Vector.hpp"
 
 struct TTF_Text;
@@ -37,7 +39,7 @@ struct wlLevelState {
 };
 
 struct wlCenteringOffset {
-	wlVec2					value{};
+	wlVec2					value;
 };
 
 struct wlGameState {
@@ -45,8 +47,11 @@ struct wlGameState {
 
 	int32_t					money{ 0 };
 
+	int32_t					gateHealth{ 1 };
+	std::function<void( entt::registry& )> onDefeat;
 
-	TTF_Text *				txtMoney{ nullptr };
+
+	TTF_Text *				txtMoney = nullptr;
 
 	void AddMoney( const int32_t addedMoney) {
 		money += addedMoney;
@@ -57,6 +62,8 @@ struct wlGameState {
 		money = newMoney;
 		UpdateTxtMoney();
 	}
+
+	void TakeDamage( entt::registry& reg, int32_t damage );
 
 	void UpdateTxtMoney() const;
 };

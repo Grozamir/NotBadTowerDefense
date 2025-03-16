@@ -21,7 +21,7 @@ private:
 	void					LoadNextScene();
 
 private:
-	std::shared_ptr<wlScene_Base> currentScene{ nullptr };
+	std::shared_ptr<wlScene_Base> currentScene = nullptr;
 
 	bool					needChangeScene{ false };
 	sceneType_t				nextScene{ sceneType_t::MAIN_MENU };
